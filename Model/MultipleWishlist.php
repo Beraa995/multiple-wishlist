@@ -7,13 +7,19 @@
  */
 namespace BKozlic\MultipleWishlist\Model;
 
-use Magento\Framework\Api\ExtensibleDataInterface;
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistExtensionInterface;
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 
-class MultipleWishlist extends AbstractExtensibleModel implements IdentityInterface, ExtensibleDataInterface
+class MultipleWishlist extends AbstractExtensibleModel implements MultipleWishlistInterface, IdentityInterface
 {
     const CACHE_TAG = 'multiple_wishlist';
+
+    /**
+     * @var string
+     */
+    protected $_idFieldName = self::MULTIPLE_WISHLIST_ID;
 
     /**
      * @var string
@@ -39,5 +45,53 @@ class MultipleWishlist extends AbstractExtensibleModel implements IdentityInterf
     public function getIdentities()
     {
         return [self::CACHE_TAG . '_' . $this->getId()];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWishlistId()
+    {
+        return $this->getData(self::WISHLIST_ID);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setWishlistId(int $id)
+    {
+        return $this->setData(self::WISHLIST_ID, $id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return $this->getData(self::MULTIPLE_WISHLIST_NAME);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setName(string $name)
+    {
+        return $this->setData(self::MULTIPLE_WISHLIST_NAME, $name);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getExtensionAttributes()
+    {
+        return $this->_getExtensionAttributes();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setExtensionAttributes(MultipleWishlistExtensionInterface $extensionAttributes)
+    {
+        return $this->_setExtensionAttributes($extensionAttributes);
     }
 }
