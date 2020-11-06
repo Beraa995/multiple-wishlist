@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category  BKozlic
+ * @package   BKozlic\MultipleWishlist
+ * @author    Berin Kozlic - berin.kozlic@gmail.com
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="multiple_wishlist" resource="default" engine="innodb" comment="Wishlist Item Option Table">
+        <column xsi:type="int" name="multiple_wishlist_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Multiple Wishlist ID" />
+        <column xsi:type="int" name="wishlist_id" padding="10" unsigned="true" nullable="false" comment="Wishlist ID" />
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Multiple Wishlist Name" />
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="multiple_wishlist_id" />
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MULTIPLE_WISHLIST_MULTIPLE_WISHLIST_ID_WISHLIST_WISHLIST_ID"
+                    table="multiple_wishlist" column="multiple_wishlist_id" referenceTable="wishlist"
+                    referenceColumn="wishlist_id" onDelete="CASCADE" />
+    </table>
+</schema>
