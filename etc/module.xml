@@ -9,5 +9,9 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
     <!-- TODO Add dependencies -->
-    <module name="BKozlic_MultipleWishlist" />
+    <module name="BKozlic_MultipleWishlist">
+        <sequence>
+            <module name="Magento_Wishlist" />
+        </sequence>
+    </module>
 </config>
