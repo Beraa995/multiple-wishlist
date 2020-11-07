@@ -52,7 +52,7 @@ interface MultipleWishlistInterface extends ExtensibleDataInterface
     /**
      * Returns multiple wishlist name
      *
-     * @return string|null
+     * @return string
      */
     public function getName();
 
