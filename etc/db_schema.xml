@@ -17,7 +17,7 @@
             <column name="multiple_wishlist_id" />
         </constraint>
         <constraint xsi:type="foreign" referenceId="MULTIPLE_WISHLIST_MULTIPLE_WISHLIST_ID_WISHLIST_WISHLIST_ID"
-                    table="multiple_wishlist" column="multiple_wishlist_id" referenceTable="wishlist"
+                    table="multiple_wishlist" column="wishlist_id" referenceTable="wishlist"
                     referenceColumn="wishlist_id" onDelete="CASCADE" />
     </table>
 </schema>
