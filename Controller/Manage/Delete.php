@@ -54,11 +54,8 @@ class Delete extends Action implements HttpPostActionInterface
         //@TODO Check ajax request
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        if (!$this->formKeyValidator->validate($this->getRequest())) {
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
-        }
-
         $params = $this->getRequest()->getParams();
+
         if (!isset($params['id'])) {
             $this->messageManager->addErrorMessage(__('Required data missing!'));
             return $resultRedirect->setPath($this->_redirect->getRefererUrl());

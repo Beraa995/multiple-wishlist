@@ -13,6 +13,16 @@
             <block ifconfig="wishlist/multiple_wishlist_general/enabled" name="bkozlic.multiplewishlist.modal" template="BKozlic_MultipleWishlist::addto/modal.phtml">
                 <arguments>
                     <argument name="view_model" xsi:type="object">BKozlic\MultipleWishlist\ViewModel\MultipleWishlist</argument>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="multiple_wishlists" xsi:type="array">
+                                <item name="component" xsi:type="string">BKozlic_MultipleWishlist/js/view/multiple-wishlists</item>
+                                <item name="config" xsi:type="array">
+                                    <item name="template" xsi:type="string">BKozlic_MultipleWishlist/list</item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
                 </arguments>
             </block>
         </referenceContainer>

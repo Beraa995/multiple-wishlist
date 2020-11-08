@@ -26,7 +26,7 @@ interface MultipleWishlistRepositoryInterface
     public function save(MultipleWishlistInterface $multipleWishlist);
 
     /**
-     * Load multiple wishlist data by id
+     * Load multiple wishlist by id
      * @param int $multipleWishlistId
      * @throws NoSuchEntityException
      * @return MultipleWishlist

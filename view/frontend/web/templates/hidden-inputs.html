@@ -1,0 +1,5 @@
+<div class="multiple-wishlist-hidden">
+    <% _.each(data.data, function(value, index) { %>
+        <input type="hidden" name="<%- index %>" value="<%- value %>">
+    <% }) %>
+</div>

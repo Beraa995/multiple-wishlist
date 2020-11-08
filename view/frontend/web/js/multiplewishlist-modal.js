@@ -7,15 +7,19 @@
 define([
     'jquery',
     'Magento_Ui/js/modal/modal',
-    'mage/translate'
-], function($, modal, $t) {
+    'mage/translate',
+    'mage/template',
+    'text!BKozlic_MultipleWishlist/templates/hidden-inputs.html',
+], function($, modal, $t, mageTemplate, inputsTemplate) {
     'use strict';
 
-    $.widget('bkozlic.modal', {
+    $.widget('bkozlic.multiplewishlistmodal', {
         options: {
+            hiddenInputs: '.multiple-wishlist-hidden',
             modalOptions: {
                 title: $t('Add to wishlist'),
                 responsive: true,
+                form: '#multiple-wishlist-form',
                 trigger: '[data-action=add-to-wishlist]',
                 buttons: [
                     {
@@ -23,6 +27,10 @@ define([
                     },
                     {
                         text: $t('Add Item To Selected Wishlist'),
+                        class: 'action primary',
+                        click: function () {
+                            $(this.options.form).submit();
+                        }
                     }
                 ]
             },
@@ -34,21 +42,32 @@ define([
         },
 
         /**
-         * Remove default data attribute to prevent default request
+         * Remove default data attribute and create new from in the modal
          * @private
          */
         _prepareElements: function () {
-            $(this.options.modalOptions.trigger).attr('data-multiple', function () {
+            let widget = this;
+            $(widget.options.modalOptions.trigger).attr('data-multiple', function () {
                 return JSON.stringify($(this).data('post'));
             });
 
-            $(this.options.modalOptions.trigger).on('click', function (e) {
+            $(document).on('click', widget.options.modalOptions.trigger, function (e) {
                 e.preventDefault();
+
+                let postData = $(this).data('multiple'),
+                    inputsHidden = $(mageTemplate(inputsTemplate, {
+                        data: postData
+                    })),
+                    multipleWishlistForm = $(widget.element).find('form');
+
+                multipleWishlistForm.attr('action', postData.action);
+                multipleWishlistForm.find(widget.options.hiddenInputs).remove()
+                multipleWishlistForm.append(inputsHidden)
             })
 
-            $(this.options.modalOptions.trigger).removeAttr('data-post');
-        }
+            $(widget.options.modalOptions.trigger).removeAttr('data-post');
+        },
     })
 
-    return $.bkozlic.modal
+    return $.bkozlic.multiplewishlistmodal;
 });

@@ -10,9 +10,27 @@
  * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
  */
 $viewModel = $block->getViewModel();
+//@TODO If logged in and if modal enabled
+//@TODO Provide options to widget here
+$block->getUrl()
 ?>
 <?php if ($viewModel->isCustomerLoggedIn()): ?>
-    <div class="multiplewishlist-modal" data-mage-init='{"multipleWishlistModal": {}}'>
-        Modal
+    <div class="multiplewishlist-modal" data-mage-init='{"multipleWishlistModal": {}}'
+         data-bind="scope: 'multiple_wishlists'" data-item="multiple_wishlists">
+        <form id="multiple-wishlist-form" action="#" method="post">
+            <!-- ko ifnot: hasWishlists() -->
+                <?= __('You don\'t have created wishlists. Item will be assigned to the Default wishlist.'); ?>
+            <!-- /ko -->
+
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        </form>
     </div>
+
+    <script type="text/x-magento-init">
+        {
+            "[data-item='multiple_wishlists']": {
+                "Magento_Ui/js/core/app": <?= /* @escapeNotVerified */ $block->getJsLayout(); ?>
+            }
+        }
+    </script>
 <?php endif; ?>

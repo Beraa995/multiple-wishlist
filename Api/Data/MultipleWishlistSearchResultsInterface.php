@@ -22,7 +22,7 @@ interface MultipleWishlistSearchResultsInterface extends SearchResultsInterface
     public function getItems();
 
     /**
-     * Set multiple wishlist.
+     * Set multiple wishlist list.
      *
      * @param MultipleWishlistInterface[] $items
      * @return $this

@@ -1,0 +1,31 @@
+<fieldset class="fieldset fieldset-multiple-wishlist">
+    <!-- TODO Options to create a wishlist here -->
+    <div class="field field-multiple-wishlist">
+        <!-- ko if: hasWishlists() -->
+            <div class="label">
+                <!-- ko i18n: 'Wishlist' --><!-- /ko -->
+            </div>
+            <!-- ko foreach: { data: getMultipleWishlists(), as: 'item' } -->
+                <div class="multiple-wishlist-item">
+                    <input type="radio"
+                           name="multiple_wishlist_id"
+                           class="radio"
+                           data-bind="attr: {'id': 'multiple_wishlist' + item.id}, value: item.id" />
+                    <label data-bind="attr: {'for': 'multiple_wishlist' + item.id}" class="label">
+                        <span data-bind="text: item.name"></span>
+                    </label>
+                </div>
+            <!-- /ko -->
+        <!-- /ko -->
+    </div>
+    <div class="field field-multiple-wishlist">
+        <div class="label">
+            <!-- ko i18n: 'New Wishlist Name' --><!-- /ko -->
+        </div>
+        <input type="text" name="muttiple_wishlist_name" data-bind="value: wishlistNameValue">
+    </div>
+    <button type="button" class="action primary"
+            data-bind="attr: {'title': $t('Create Wishlist')}, click: createNew, css: { disabled: ajaxProcess }">
+        <span translate="'Create Wishlist'"/>
+    </button>
+</fieldset>
