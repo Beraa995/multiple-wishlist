@@ -11,4 +11,8 @@
  */
 $viewModel = $block->getViewModel();
 ?>
-Modal test
+<?php if ($viewModel->isCustomerLoggedIn()): ?>
+    <div class="multiplewishlist-modal" data-mage-init='{"multipleWishlistModal": {}}'>
+        Modal
+    </div>
+<?php endif; ?>
