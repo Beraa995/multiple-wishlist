@@ -22,7 +22,12 @@
         <div class="label">
             <!-- ko i18n: 'New Wishlist Name' --><!-- /ko -->
         </div>
-        <input type="text" name="muttiple_wishlist_name" data-bind="value: wishlistNameValue">
+        <input type="text" name="muttiple_wishlist_name" data-bind="value: wishlistNameValue, css: { 'mage-error': createError }">
+        <!-- ko if: createError -->
+            <div generated="true" class="mage-error">
+                <!-- ko i18n: 'This is a required field.' --><!-- /ko -->
+            </div>
+        <!-- /ko -->
     </div>
     <button type="button" class="action primary"
             data-bind="attr: {'title': $t('Create Wishlist')}, click: createNew, css: { disabled: ajaxProcess }">

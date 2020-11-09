@@ -17,6 +17,7 @@ define([
     return Component.extend({
         wishlistNameValue: ko.observable(''),
         ajaxProcess: ko.observable(false),
+        createError: ko.observable(false),
 
         /**
          * Checks if there are multiple wishlists
@@ -44,8 +45,11 @@ define([
                 component = this,
                 wishlistName = this.wishlistNameValue();
 
-            if (createUrl && !this.ajaxProcess()) {
-                //@TODO Show message if error
+            if (!wishlistName.trim()) {
+                this.createError(true);
+            }
+
+            if (createUrl && !this.ajaxProcess() && wishlistName.trim()) {
                 this.ajaxProcess(true);
                 $.post({
                     url: createUrl,
@@ -58,6 +62,7 @@ define([
                     complete: function () {
                         component.wishlistNameValue('');
                         component.ajaxProcess(false);
+                        component.createError(false);
                     }
                 });
             }
