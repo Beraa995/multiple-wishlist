@@ -20,4 +20,20 @@
                     table="multiple_wishlist" column="wishlist_id" referenceTable="wishlist"
                     referenceColumn="wishlist_id" onDelete="CASCADE" />
     </table>
+
+    <table name="multiple_wishlist_item" resource="default" engine="innodb" comment="Wishlist Item Option Table">
+        <column xsi:type="int" name="item_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Multiple Wishlist Item ID" />
+        <column xsi:type="int" name="multiple_wishlist_id" padding="10" unsigned="true" nullable="true" comment="Multiple Wishlist ID" />
+        <column xsi:type="int" name="wishlist_item_id" padding="10" unsigned="true" nullable="false" comment="Wishlist item ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="item_id" />
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MULTIPLE_WISHLIST_ITEM_WISHLIST_ITEM_ID_WISHLIST_ITEM_WISHLIST_ITEM_ID"
+                    table="multiple_wishlist_item" column="wishlist_item_id" referenceTable="wishlist_item"
+                    referenceColumn="wishlist_item_id" onDelete="CASCADE" />
+        <constraint xsi:type="foreign" referenceId="MULTIPLE_WISHLIST_ITEM_MULTIPLE_WISHLIST_ID_MULTIPLE_WISHLIST_MULTIPLE_WISHLIST_ID"
+                    table="multiple_wishlist_item" column="multiple_wishlist_id" referenceTable="multiple_wishlist"
+                    referenceColumn="multiple_wishlist_id" onDelete="SET NULL" />
+    </table>
 </schema>
