@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category  BKozlic
+ * @package   BKozlic\MultipleWishlist
+ * @author    Berin Kozlic - berin.kozlic@gmail.com
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="wishlist_add_product">
+        <observer name="multiple_wishlist_process_observer" instance="BKozlic\MultipleWishlist\Observer\AddToWishlistObserver" />
+    </event>
+</config>
