@@ -18,6 +18,9 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 
+/**
+ * Controller for multiple wishlist creation
+ */
 class Create extends Action implements HttpPostActionInterface
 {
     /**

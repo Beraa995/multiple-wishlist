@@ -30,7 +30,7 @@
         <!-- /ko -->
     </div>
     <button type="button" class="action primary"
-            data-bind="attr: {'title': $t('Create Wishlist')}, click: createNew, css: { disabled: ajaxProcess }">
-        <span translate="'Create Wishlist'"/>
+            data-bind="attr: {'title': createButtonText}, click: createNew, css: { disabled: ajaxProcess }">
+        <span data-bind="text: createButtonText"></span>
     </button>
 </fieldset>

@@ -11,4 +11,7 @@
     <preference for="BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface" type="BKozlic\MultipleWishlist\Model\MultipleWishlist" />
     <preference for="BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface" type="BKozlic\MultipleWishlist\Model\MultipleWishlistRepository" />
     <preference for="BKozlic\MultipleWishlist\Api\Data\MultipleWishlistSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+    <preference for="BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface" type="BKozlic\MultipleWishlist\Model\MultipleWishlistItem" />
+    <preference for="BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface" type="BKozlic\MultipleWishlist\Model\MultipleWishlistItemRepository" />
+    <preference for="BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 </config>

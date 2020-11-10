@@ -9,6 +9,9 @@ namespace BKozlic\MultipleWishlist\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
+/**
+ * Resource model class for Multiple Wishlist
+ */
 class MultipleWishlist extends AbstractDb
 {
     /**

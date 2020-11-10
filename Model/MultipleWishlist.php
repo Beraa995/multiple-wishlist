@@ -12,6 +12,9 @@ use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 
+/**
+ * Model class for Multiple Wishlist
+ */
 class MultipleWishlist extends AbstractExtensibleModel implements MultipleWishlistInterface, IdentityInterface
 {
     const CACHE_TAG = 'multiple_wishlist';

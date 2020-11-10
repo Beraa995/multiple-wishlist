@@ -26,8 +26,13 @@
                 comment="Multiple Wishlist Item ID" />
         <column xsi:type="int" name="multiple_wishlist_id" padding="10" unsigned="true" nullable="true" comment="Multiple Wishlist ID" />
         <column xsi:type="int" name="wishlist_item_id" padding="10" unsigned="true" nullable="false" comment="Wishlist item ID"/>
+        <column xsi:type="decimal" name="qty" scale="4" precision="12" unsigned="false" nullable="false" comment="Qty"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="item_id" />
+        </constraint>
+        <constraint xsi:type="unique" referenceId="UNIQUE_PAIR">
+            <column name="multiple_wishlist_id"/>
+            <column name="wishlist_item_id"/>
         </constraint>
         <constraint xsi:type="foreign" referenceId="MULTIPLE_WISHLIST_ITEM_WISHLIST_ITEM_ID_WISHLIST_ITEM_WISHLIST_ITEM_ID"
                     table="multiple_wishlist_item" column="wishlist_item_id" referenceTable="wishlist_item"

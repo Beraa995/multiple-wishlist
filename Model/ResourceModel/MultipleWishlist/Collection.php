@@ -11,6 +11,9 @@ use BKozlic\MultipleWishlist\Model\MultipleWishlist as MultipleWishlistModel;
 use BKozlic\MultipleWishlist\Model\ResourceModel\MultipleWishlist as MultipleWishlistResource;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
+/**
+ * Collection class for Multiple Wishlist
+ */
 class Collection extends AbstractCollection
 {
     /**

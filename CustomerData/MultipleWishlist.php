@@ -13,6 +13,9 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\UrlInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 
+/**
+ * Add new customer section
+ */
 class MultipleWishlist implements SectionSourceInterface
 {
     /**
@@ -66,7 +69,7 @@ class MultipleWishlist implements SectionSourceInterface
     }
 
     /**
-     * Returns multiple wishlists for current main wishlist id
+     * Returns multiple wishlists for the current main wishlist id
      * @return array
      */
     protected function getItems()

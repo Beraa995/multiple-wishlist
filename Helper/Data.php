@@ -10,6 +10,9 @@ namespace BKozlic\MultipleWishlist\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Store\Model\ScopeInterface;
 
+/**
+ * Module's helper class
+ */
 class Data extends AbstractHelper
 {
     /**

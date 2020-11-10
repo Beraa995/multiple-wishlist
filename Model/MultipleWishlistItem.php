@@ -12,6 +12,9 @@ use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use Magento\Framework\DataObject\IdentityInterface;
 use Magento\Framework\Model\AbstractExtensibleModel;
 
+/**
+ * Model class for Multiple Wishlist Item
+ */
 class MultipleWishlistItem extends AbstractExtensibleModel implements IdentityInterface, MultipleWishlistItemInterface
 {
     const CACHE_TAG = 'multiple_wishlist_item';
@@ -58,7 +61,7 @@ class MultipleWishlistItem extends AbstractExtensibleModel implements IdentityIn
     /**
      * @inheritDoc
      */
-    public function setMultipleWishlistId(int $id)
+    public function setMultipleWishlistId($id)
     {
         return $this->setData(self::MULTIPLE_WISHLIST_ID, $id);
     }
@@ -77,6 +80,22 @@ class MultipleWishlistItem extends AbstractExtensibleModel implements IdentityIn
     public function setWishlistItemId(int $id)
     {
         return $this->setData(self::MULTIPLE_WISHLIST_ITEM, $id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQty()
+    {
+        return $this->getData(self::MULTIPLE_WISHLIST_ITEM_QTY);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setQty(float $qty)
+    {
+        return $this->setData(self::MULTIPLE_WISHLIST_ITEM_QTY, $qty);
     }
 
     /**

@@ -11,7 +11,7 @@ use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistExtensionInterface;
 use Magento\Framework\Api\ExtensibleDataInterface;
 
 /**
- * Interface MultipleWishlistInterface
+ * Interface for MultipleWishlist Model
  */
 interface MultipleWishlistInterface extends ExtensibleDataInterface
 {

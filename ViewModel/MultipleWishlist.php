@@ -16,6 +16,9 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
+/**
+ * Module's view model class
+ */
 class MultipleWishlist implements ArgumentInterface
 {
     /**

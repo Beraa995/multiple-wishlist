@@ -47,6 +47,7 @@ define([
          */
         _prepareElements: function () {
             let widget = this;
+            //@TODO If there are items loaded by ajax this won't work. Prevent click globally.
             $(widget.options.modalOptions.trigger).attr('data-multiple', function () {
                 return JSON.stringify($(this).data('post'));
             });

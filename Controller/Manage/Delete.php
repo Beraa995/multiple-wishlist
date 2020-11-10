@@ -18,6 +18,9 @@ use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
+/**
+ * Controller for multiple wishlist deletion
+ */
 class Delete extends Action implements HttpPostActionInterface
 {
     /**
@@ -32,6 +35,7 @@ class Delete extends Action implements HttpPostActionInterface
 
     /**
      * Create constructor.
+     *
      * @param Context $context
      * @param Validator $formKeyValidator
      * @param MultipleWishlistRepository $multipleWishlistRepository
@@ -52,6 +56,7 @@ class Delete extends Action implements HttpPostActionInterface
     public function execute()
     {
         //@TODO Check ajax request
+        //@TODO Check if there are duplicate items and merge into one
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $params = $this->getRequest()->getParams();

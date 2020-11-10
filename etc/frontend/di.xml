@@ -15,4 +15,8 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Wishlist\Block\Customer\Wishlist">
+        <plugin name="filter_wishlist_collection_plugin" type="BKozlic\MultipleWishlist\Plugin\Block\Wishlist" />
+    </type>
 </config>
