@@ -10,7 +10,6 @@ namespace BKozlic\MultipleWishlist\Observer;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistItemFactory;
-use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
@@ -45,11 +44,6 @@ class AddToWishlistObserver implements ObserverInterface
     protected $searchCriteriaBuilder;
 
     /**
-     * @var FilterBuilder
-     */
-    protected $filterBuilder;
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -60,7 +54,6 @@ class AddToWishlistObserver implements ObserverInterface
      * @param MultipleWishlistItemFactory $itemFactory
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param FilterBuilder $filterBuilder
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -68,14 +61,12 @@ class AddToWishlistObserver implements ObserverInterface
         MultipleWishlistItemFactory $itemFactory,
         MultipleWishlistItemRepositoryInterface $itemRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        FilterBuilder $filterBuilder,
         LoggerInterface $logger
     ) {
         $this->request = $request;
         $this->itemFactory = $itemFactory;
         $this->itemRepository = $itemRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->filterBuilder = $filterBuilder;
         $this->logger = $logger;
     }
 
@@ -166,6 +157,7 @@ class AddToWishlistObserver implements ObserverInterface
         if (count($itemList) > 1) {
             $firstItem = array_shift($itemList);
 
+            //@TODO Check if this behavior should be in helper
             foreach ($itemList as $item) {
                 try {
                     $firstItem->setQty($item->getQty() + $firstItem->getQty());

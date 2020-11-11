@@ -56,7 +56,7 @@ class Delete extends Action implements HttpPostActionInterface
     public function execute()
     {
         //@TODO Check ajax request
-        //@TODO Check if there are duplicate items and merge into one
+        //@TODO Check if there are duplicate items after delete and merge into one
         /** @var Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $params = $this->getRequest()->getParams();
