@@ -1,0 +1,31 @@
+<?php
+/**
+ * @var \BKozlic\MultipleWishlist\Block\MultipleWishlistSwitcher $block
+ */
+//@TODO Check if module is enabled
+//@TODO Check if wishlist isAllow
+//@TODO Hide default wishlist when there are no items in there
+?>
+<?php if ($block->isWishlistAllowed() && $block->isMultipleWishlistAllowed()): ?>
+    <div class="toolbar wishlist-switcher">
+        <label for="wishlist-select-switcher" class="wishlist-switcher-label">
+            <?= $block->escapeHtml(__('Wishlist')); ?>
+        </label>
+        <select id="wishlist-select-switcher" data-mage-init='{"redirectUrl": {"event":"change"}}' class="limiter-options">
+            <option value="<?= $block->escapeHtmlAttr($block->getMultipleWishlistUrl(null)) ?>"
+                <?php if ($block->isSelectedWishlist(null)): ?>
+                    selected
+                <?php endif; ?>>
+                <?= $block->escapeHtml(__('Default Wishlist')); ?>
+            </option>
+            <?php foreach ($block->getCollection() as $multipleWishlist): ?>
+                <option value="<?= $block->escapeHtmlAttr($block->getMultipleWishlistUrl($multipleWishlist->getId())) ?>"
+                    <?php if ($block->isSelectedWishlist($multipleWishlist->getId())): ?>
+                        selected
+                    <?php endif; ?>>
+                    <?= $block->escapeHtml($multipleWishlist->getName()); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+<?php endif; ?>
