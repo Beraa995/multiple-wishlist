@@ -81,7 +81,6 @@ class Wishlist
 
         foreach ($result as $wishlistItem) {
             if (isset($idToQtyMapper[$wishlistItem->getId()])) {
-                //@TODO Check if there are duplicates. If yes sum the qty
                 $wishlistItem->setQty($idToQtyMapper[$wishlistItem->getId()]);
             }
         }
