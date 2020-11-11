@@ -67,7 +67,7 @@ define([
                         name: wishlistName
                     },
                     success: function (data) {
-                        //@TODO Process success
+                        //@TODO Process success/error
                     },
                     complete: function () {
                         component.wishlistNameValue('');

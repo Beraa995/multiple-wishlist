@@ -107,7 +107,11 @@ class Wishlist
         $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
         $ids = [];
         foreach ($itemList as $item) {
-            $ids[$item->getWishlistItemId()] = $item->getQty();
+            if (isset($ids[$item->getWishlistItemId()])) {
+                $ids[$item->getWishlistItemId()] += $item->getQty();
+            } else {
+                $ids[$item->getWishlistItemId()] = $item->getQty();
+            }
         }
 
         return $ids;
