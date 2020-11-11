@@ -167,7 +167,6 @@ class AddToWishlistObserver implements ObserverInterface
         if (count($itemList) > 1) {
             $firstItem = array_shift($itemList);
 
-            //@TODO Check if this behavior should be in helper
             foreach ($itemList as $item) {
                 try {
                     $firstItem->setQty($item->getQty() + $firstItem->getQty());

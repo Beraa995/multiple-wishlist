@@ -21,8 +21,6 @@ use Magento\Wishlist\Helper\Data;
  */
 class MultipleWishlistSwitcher extends Template
 {
-    const MULTIPLE_WISHLIST_PARAM_NAME = 'multiple_wishlist';
-
     /**
      * @var MultipleWishlistRepositoryInterface
      */
@@ -137,7 +135,7 @@ class MultipleWishlistSwitcher extends Template
         $urlParams['_escape'] = true;
         $urlParams['_use_rewrite'] = true;
         $urlParams['_fragment'] = null;
-        $urlParams['_query'] = [self::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlistId];
+        $urlParams['_query'] = [MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlistId];
 
         return $this->getUrl('*/*/*', $urlParams);
     }
@@ -150,7 +148,7 @@ class MultipleWishlistSwitcher extends Template
      */
     public function isSelectedWishlist($multipleWishlistId)
     {
-        $wishlistRequestParam = $this->request->getParam(self::MULTIPLE_WISHLIST_PARAM_NAME);
+        $wishlistRequestParam = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         return $wishlistRequestParam === $multipleWishlistId;
     }
 }

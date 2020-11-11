@@ -19,4 +19,8 @@
     <type name="Magento\Wishlist\Block\Customer\Wishlist">
         <plugin name="filter_wishlist_collection_plugin" type="BKozlic\MultipleWishlist\Plugin\Block\Wishlist" />
     </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Index">
+        <plugin name="change_wishlist_page_title_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Index" />
+    </type>
 </config>

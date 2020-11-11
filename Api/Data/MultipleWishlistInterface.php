@@ -15,6 +15,7 @@ use Magento\Framework\Api\ExtensibleDataInterface;
  */
 interface MultipleWishlistInterface extends ExtensibleDataInterface
 {
+    const MULTIPLE_WISHLIST_PARAM_NAME = 'multiple_wishlist';
     const MULTIPLE_WISHLIST_ID = 'multiple_wishlist_id';
     const WISHLIST_ID = 'wishlist_id';
     const MULTIPLE_WISHLIST_NAME = 'name';

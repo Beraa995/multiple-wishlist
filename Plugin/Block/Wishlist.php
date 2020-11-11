@@ -8,8 +8,8 @@
 namespace BKozlic\MultipleWishlist\Plugin\Block;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
-use BKozlic\MultipleWishlist\Block\MultipleWishlistSwitcher;
 use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
@@ -74,8 +74,7 @@ class Wishlist
             return $result;
         }
 
-        //@TODO Update page title
-        $multipleWishlistId = $this->request->getParam(MultipleWishlistSwitcher::MULTIPLE_WISHLIST_PARAM_NAME);
+        $multipleWishlistId = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         $idToQtyMapper = $this->getMultipleWishlistItemIdToQtyMapper($multipleWishlistId);
 
         $result->addFieldToFilter('wishlist_item_id', ['in' => array_keys($idToQtyMapper)]);
