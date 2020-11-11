@@ -13,5 +13,10 @@
             <block class="BKozlic\MultipleWishlist\Block\MultipleWishlistSwitcher" name="multiple.wishlist.switcher"
                    template="BKozlic_MultipleWishlist::switcher.phtml" before="customer.wishlist" />
         </referenceContainer>
+
+        <referenceBlock name="customer.wishlist.items">
+            <block ifconfig="wishlist/multiple_wishlist_general/enabled" class="BKozlic\MultipleWishlist\Block\Items\MultipleWishlistFormInput"
+                   name="multiple.wishlist.form.input" />
+        </referenceBlock>
     </body>
 </page>
