@@ -12,6 +12,7 @@
         <wishlist>
             <multiple_wishlist_general>
                 <enabled>1</enabled>
+                <wishlist_strategy>1</wishlist_strategy>
             </multiple_wishlist_general>
         </wishlist>
     </default>

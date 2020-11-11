@@ -19,14 +19,25 @@ class Data extends AbstractHelper
      * Helper constants
      */
     const XML_PATH_ENABLED = 'wishlist/multiple_wishlist_general/enabled';
+    const XML_PATH_STRATEGY = 'wishlist/multiple_wishlist_general/wishlist_strategy';
 
     /**
      * Checks if module is enabled
      *
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_ENABLED, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Checks if wishlist modal can be shown or not
+     *
+     * @return bool
+     */
+    public function canShowModal()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_STRATEGY, ScopeInterface::SCOPE_STORE);
     }
 }

@@ -9,6 +9,7 @@ namespace BKozlic\MultipleWishlist\ViewModel;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
+use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Customer\Model\Group;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -27,13 +28,21 @@ class MultipleWishlist implements ArgumentInterface
     protected $customerSession;
 
     /**
+     * @var Data
+     */
+    protected $moduleHelper;
+
+    /**
      * MultipleWishlist constructor.
      * @param Session $customerSession
+     * @param Data $moduleHelper
      */
     public function __construct(
-        Session $customerSession
+        Session $customerSession,
+        Data $moduleHelper
     ) {
         $this->customerSession = $customerSession;
+        $this->moduleHelper = $moduleHelper;
     }
 
     /**
@@ -45,5 +54,15 @@ class MultipleWishlist implements ArgumentInterface
     public function isCustomerLoggedIn()
     {
         return $this->customerSession->getCustomerGroupId() !== Group::NOT_LOGGED_IN_ID;
+    }
+
+    /**
+     * Checks if modal can be shown
+     *
+     * @return bool
+     */
+    public function canShowModal()
+    {
+        return $this->moduleHelper->canShowModal();
     }
 }

@@ -10,11 +10,10 @@
  * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
  */
 $viewModel = $block->getViewModel();
-//@TODO If logged in and if modal enabled
 //@TODO Provide options to widget here
 $block->getUrl()
 ?>
-<?php if ($viewModel->isCustomerLoggedIn()): ?>
+<?php if ($viewModel->isCustomerLoggedIn() && $viewModel->canShowModal()): ?>
     <div class="multiplewishlist-modal" data-mage-init='{"multipleWishlistModal": {}}'
          data-bind="scope: 'multiple_wishlists'" data-item="multiple_wishlists">
         <form id="multiple-wishlist-form" action="#" method="post">
