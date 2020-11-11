@@ -10,6 +10,7 @@ namespace BKozlic\MultipleWishlist\Plugin\Block;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Block\MultipleWishlistSwitcher;
+use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
 use Magento\Wishlist\Block\Customer\Wishlist as MagentoWishlistBlock;
@@ -36,20 +37,28 @@ class Wishlist
     protected $searchCriteriaBuilder;
 
     /**
+     * @var Data
+     */
+    protected $moduleHelper;
+
+    /**
      * Wishlist Block Plugin constructor.
      *
      * @param RequestInterface $request
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param Data $moduleHelper
      */
     public function __construct(
         RequestInterface $request,
         MultipleWishlistItemRepositoryInterface $itemRepository,
-        SearchCriteriaBuilder $searchCriteriaBuilder
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        Data $moduleHelper
     ) {
         $this->request = $request;
         $this->itemRepository = $itemRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->moduleHelper = $moduleHelper;
     }
 
     /**
@@ -61,7 +70,10 @@ class Wishlist
      */
     public function afterGetWishlistItems(MagentoWishlistBlock $subject, Collection $result)
     {
-        //@TODO If module is enabled
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
         //@TODO Update page title
         $multipleWishlistId = $this->request->getParam(MultipleWishlistSwitcher::MULTIPLE_WISHLIST_PARAM_NAME);
         $idToQtyMapper = $this->getMultipleWishlistItemIdToQtyMapper($multipleWishlistId);

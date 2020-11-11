@@ -9,6 +9,7 @@ namespace BKozlic\MultipleWishlist\Observer;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
+use BKozlic\MultipleWishlist\Helper\Data;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistItemFactory;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
@@ -49,25 +50,33 @@ class AddToWishlistObserver implements ObserverInterface
     protected $logger;
 
     /**
+     * @var Data
+     */
+    protected $moduleHelper;
+
+    /**
      * AddToWishlistObserver constructor.
      * @param RequestInterface $request
      * @param MultipleWishlistItemFactory $itemFactory
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param LoggerInterface $logger
+     * @param Data $moduleHelper
      */
     public function __construct(
         RequestInterface $request,
         MultipleWishlistItemFactory $itemFactory,
         MultipleWishlistItemRepositoryInterface $itemRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Data $moduleHelper
     ) {
         $this->request = $request;
         $this->itemFactory = $itemFactory;
         $this->itemRepository = $itemRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->logger = $logger;
+        $this->moduleHelper = $moduleHelper;
     }
 
     /**
@@ -78,7 +87,10 @@ class AddToWishlistObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        //@TODO If module is enabled
+        if (!$this->moduleHelper->isEnabled()) {
+            return;
+        }
+
         $multipleWishlist = $this->request->getParam('multiple_wishlist_id');
         $qty = $this->request->getParam('qty') ?: 1;
         $mainItem = $observer->getEvent()->getItem();
@@ -92,7 +104,6 @@ class AddToWishlistObserver implements ObserverInterface
 
         if ($existingItem) {
             try {
-                //@TODO Set correct qty
                 $existingItem->setQty($existingItem->getQty() + $qty);
                 $this->itemRepository->save($existingItem);
             } catch (CouldNotSaveException $e) {
@@ -137,7 +148,6 @@ class AddToWishlistObserver implements ObserverInterface
      */
     protected function getExistingItem(int $itemId, $multipleWishlistId)
     {
-        //@TODO Make db rows unique also when wishlist id is null. Otherwise it is possible to save duplicates.
         $this->searchCriteriaBuilder->addFilter(
             MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
             $multipleWishlistId,
