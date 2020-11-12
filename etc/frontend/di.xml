@@ -23,4 +23,8 @@
     <type name="Magento\Wishlist\Controller\Index\Index">
         <plugin name="change_wishlist_page_title_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Index" />
     </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Update">
+        <plugin name="update_multiple_wishlist_items_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Update" />
+    </type>
 </config>

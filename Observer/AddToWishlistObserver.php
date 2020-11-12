@@ -87,6 +87,7 @@ class AddToWishlistObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        //@TODO After add/remove/update recalculate main item qty
         if (!$this->moduleHelper->isEnabled()) {
             return;
         }
@@ -160,25 +161,11 @@ class AddToWishlistObserver implements ObserverInterface
         );
 
         $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
-        if (!count($itemList)) {
+        $uniqueList = $this->moduleHelper->makeUniqueCollection($itemList);
+        if (!count($uniqueList)) {
             return null;
         }
 
-        if (count($itemList) > 1) {
-            $firstItem = array_shift($itemList);
-
-            foreach ($itemList as $item) {
-                try {
-                    $firstItem->setQty($item->getQty() + $firstItem->getQty());
-                    $this->itemRepository->delete($item);
-                } catch (CouldNotDeleteException $e) {
-                    $this->logger->error($e->getMessage());
-                }
-            }
-
-            return $firstItem;
-        }
-
-        return array_shift($itemList);
+        return array_shift($uniqueList);
     }
 }

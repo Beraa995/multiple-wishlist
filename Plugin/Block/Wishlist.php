@@ -81,7 +81,8 @@ class Wishlist
 
         foreach ($result as $wishlistItem) {
             if (isset($idToQtyMapper[$wishlistItem->getId()])) {
-                $wishlistItem->setQty($idToQtyMapper[$wishlistItem->getId()]);
+                $wishlistItem->setQty($idToQtyMapper[$wishlistItem->getId()]['qty']);
+                $wishlistItem->setDescription($idToQtyMapper[$wishlistItem->getId()]['desc']);
             }
         }
 
@@ -89,7 +90,7 @@ class Wishlist
     }
 
     /**
-     * Returns ids of items in the specified multiple wishlist
+     * Returns ids of items in the specified multiple wishlist with description and qty
      *
      * @param int|null $multipleWishlistId
      * @return array
@@ -104,13 +105,11 @@ class Wishlist
         );
 
         $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
+        $uniqueList = $this->moduleHelper->makeUniqueCollection($itemList);
         $ids = [];
-        foreach ($itemList as $item) {
-            if (isset($ids[$item->getWishlistItemId()])) {
-                $ids[$item->getWishlistItemId()] += $item->getQty();
-            } else {
-                $ids[$item->getWishlistItemId()] = $item->getQty();
-            }
+        foreach ($uniqueList as $item) {
+            $ids[$item->getWishlistItemId()]['qty'] = $item->getQty();
+            $ids[$item->getWishlistItemId()]['desc'] = $item->getDescription();
         }
 
         return $ids;

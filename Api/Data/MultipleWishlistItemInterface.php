@@ -19,6 +19,7 @@ interface MultipleWishlistItemInterface extends ExtensibleDataInterface
     const MULTIPLE_WISHLIST_ID = 'multiple_wishlist_id';
     const MULTIPLE_WISHLIST_ITEM = 'wishlist_item_id';
     const MULTIPLE_WISHLIST_ITEM_QTY = 'qty';
+    const MULTIPLE_WISHLIST_ITEM_DESCRIPTION = 'description';
 
     /**
      * Returns multiple wishlist item id
@@ -49,6 +50,21 @@ interface MultipleWishlistItemInterface extends ExtensibleDataInterface
      * @return MultipleWishlistItemInterface
      */
     public function setQty(float $qty);
+
+    /**
+     * Returns multiple wishlist item description
+     *
+     * @return string|null
+     */
+    public function getDescription();
+
+    /**
+     * Set multiple wishlist item description
+     *
+     * @param string|null $description
+     * @return MultipleWishlistItemInterface
+     */
+    public function setDescription($description);
 
     /**
      * Returns multiple wishlist id
