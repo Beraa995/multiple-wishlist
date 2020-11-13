@@ -103,7 +103,7 @@ class Data extends AbstractHelper
 
     /**
      * Recalculate qty for main wishlist item
-     * @param $itemId
+     * @param int $itemId
      * @return void
      */
     public function recalculate($itemId)

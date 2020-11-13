@@ -11,6 +11,7 @@ use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Helper\Data as ModuleHelper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 
 /**
@@ -34,19 +35,27 @@ class Data
     protected $request;
 
     /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
+
+    /**
      * Helper Plugin constructor.
      * @param ModuleHelper $moduleHelper
      * @param RequestInterface $request
      * @param Json $json
+     * @param UrlInterface $urlBuilder
      */
     public function __construct(
         ModuleHelper $moduleHelper,
         RequestInterface $request,
-        Json $json
+        Json $json,
+        UrlInterface $urlBuilder
     ) {
         $this->moduleHelper = $moduleHelper;
         $this->json = $json;
         $this->request = $request;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -60,12 +69,51 @@ class Data
      */
     public function afterGetAddToCartParams(WishlistHelper $subject, $result, $item, $addReferer = false)
     {
-        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
-        $params = $this->json->unserialize($result);
-        if ($multipleWishlist) {
-            $params['data'][MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
         }
 
+        $params = $this->addWishlistParam($result);
+
         return $this->json->serialize($params);
+    }
+
+    /**
+     * Add multiple wishlist id to the delete params and change url
+     *
+     * @param WishlistHelper $subject
+     * @param $result
+     * @param $item
+     * @param false $addReferer
+     * @return mixed
+     */
+    public function afterGetRemoveParams(WishlistHelper $subject, $result, $item, $addReferer = false)
+    {
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
+
+        $params = $this->addWishlistParam($result);
+        $params['action'] = $this->urlBuilder->getUrl('multiplewishlist/item/remove', []);
+
+        return $this->json->serialize($params);
+    }
+
+    /**
+     * Adds param to the array
+     *
+     * @param $params
+     * @return array
+     */
+    protected function addWishlistParam($params)
+    {
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+        $paramsArray = $this->json->unserialize($params);
+        if ($multipleWishlist) {
+            $paramsArray['data'][MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
+        }
+
+        return $paramsArray;
     }
 }

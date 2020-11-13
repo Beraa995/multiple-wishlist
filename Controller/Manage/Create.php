@@ -17,6 +17,7 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
+use Psr\Log\LoggerInterface;
 
 /**
  * Controller for multiple wishlist creation
@@ -39,22 +40,30 @@ class Create extends Action implements HttpPostActionInterface
     protected $wishlistHelper;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Create constructor.
      * @param Context $context
      * @param MultipleWishlistFactory $multipleWishlistFactory
      * @param MultipleWishlistRepository $multipleWishlistRepository
      * @param WishlistHelper $wishlistHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
         MultipleWishlistFactory $multipleWishlistFactory,
         MultipleWishlistRepository $multipleWishlistRepository,
-        WishlistHelper $wishlistHelper
+        WishlistHelper $wishlistHelper,
+        LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->multipleWishlistFactory = $multipleWishlistFactory;
         $this->multipleWishlistRepository = $multipleWishlistRepository;
         $this->wishlistHelper = $wishlistHelper;
+        $this->logger = $logger;
     }
 
     /**
@@ -63,6 +72,7 @@ class Create extends Action implements HttpPostActionInterface
     public function execute()
     {
         //@TODO Limit number of wishlists with system configuration
+        //@TODO Add form key and validate here and in Delete controller
         $params = $this->getRequest()->getParams();
         $wishlistId = $this->wishlistHelper->getWishlist()->getId();
         if ($this->getRequest()->isAjax()) {
@@ -154,6 +164,7 @@ class Create extends Action implements HttpPostActionInterface
         try {
             $this->multipleWishlistRepository->save($multipleWishlist);
         } catch (CouldNotSaveException $e) {
+            $this->logger->error($e->getMessage());
             return false;
         }
 

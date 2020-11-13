@@ -123,7 +123,6 @@ class Update
     public function aroundExecute(WishlistUpdate $subject, Closure $proceed)
     {
         $mainExecute = $proceed();
-        //@TODO After update recalculate main item. Same after add to and delete.
         //@TODO Redirect to selected wishlist.
         if (!$this->moduleHelper->isEnabled()) {
             return $mainExecute;
