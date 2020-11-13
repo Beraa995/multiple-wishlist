@@ -79,7 +79,7 @@ class Index
         if ($multipleWishlistId) {
             try {
                 $wishlist = $this->multipleWishlistRepository->get($multipleWishlistId);
-                $result->getConfig()->getTitle()->set($wishlist->getName() . ' ' . __('Wishlist'));
+                $result->getConfig()->getTitle()->set($wishlist->getName());
             } catch (NoSuchEntityException $e) {
                 $this->logger->error($e->getMessage());
             }

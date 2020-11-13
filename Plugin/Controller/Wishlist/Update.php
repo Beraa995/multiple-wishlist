@@ -17,7 +17,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Wishlist\Controller\Index\Update as WishlistUpdate;
-use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Psr\Log\LoggerInterface;
 
@@ -30,11 +29,6 @@ class Update
      * @var Validator
      */
     protected $formKeyValidator;
-
-    /**
-     * @var WishlistProviderInterface
-     */
-    protected $wishlistProvider;
 
     /**
      * @var MultipleWishlistItemRepositoryInterface
@@ -64,7 +58,6 @@ class Update
     /**
      * Update Plugin constructor.
      * @param Validator $formKeyValidator
-     * @param WishlistProviderInterface $wishlistProvider
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param Data $moduleHelper
@@ -73,7 +66,6 @@ class Update
      */
     public function __construct(
         Validator $formKeyValidator,
-        WishlistProviderInterface $wishlistProvider,
         MultipleWishlistItemRepositoryInterface $itemRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         Data $moduleHelper,
@@ -81,7 +73,6 @@ class Update
         LocaleQuantityProcessor $quantityProcessor
     ) {
         $this->formKeyValidator = $formKeyValidator;
-        $this->wishlistProvider = $wishlistProvider;
         $this->itemRepository = $itemRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->moduleHelper = $moduleHelper;
@@ -131,21 +122,21 @@ class Update
      */
     public function aroundExecute(WishlistUpdate $subject, Closure $proceed)
     {
+        $mainExecute = $proceed();
         //@TODO After update recalculate main item. Same after add to and delete.
         //@TODO Redirect to selected wishlist.
         if (!$this->moduleHelper->isEnabled()) {
-            return $proceed();
+            return $mainExecute;
         }
 
         $request = $subject->getRequest();
-        $wishlist = $this->wishlistProvider->getWishlist();
-        if (!$this->formKeyValidator->validate($request) || !$wishlist) {
-            return $proceed();
+        if (!$this->formKeyValidator->validate($request)) {
+            return $mainExecute;
         }
 
         $multipleWishlist = $request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         if ($multipleWishlist === null) {
-            return $proceed();
+            return $mainExecute;
         }
 
         $this->searchCriteriaBuilder->addFilter(
@@ -180,6 +171,7 @@ class Update
             if ($item->getData('changed')) {
                 try {
                     $this->itemRepository->save($item);
+                    $this->moduleHelper->recalculate($item->getWishlistItemId());
                 } catch (CouldNotSaveException $e) {
                     $this->logger->error($e->getMessage());
                 }
@@ -187,6 +179,6 @@ class Update
         }
 
         $subject->getRequest()->setParams(['qty' => $qtys]);
-        return $proceed();
+        return $mainExecute;
     }
 }

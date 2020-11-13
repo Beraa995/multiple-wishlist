@@ -9,11 +9,15 @@ namespace BKozlic\MultipleWishlist\Helper;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Wishlist\Model\ItemFactory;
+use Magento\Wishlist\Model\ResourceModel\Item;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,19 +42,43 @@ class Data extends AbstractHelper
     protected $logger;
 
     /**
+     * @var SearchCriteriaBuilder
+     */
+    protected $searchCriteriaBuilder;
+
+    /**
+     * @var Item
+     */
+    protected $mainItemResource;
+
+    /**
+     * @var ItemFactory
+     */
+    protected $mainItemFactory;
+
+    /**
      * Data constructor.
      * @param Context $context
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param Item $mainItemResource
+     * @param ItemFactory $mainItemFactory
      * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
         MultipleWishlistItemRepositoryInterface $itemRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        Item $mainItemResource,
+        ItemFactory $mainItemFactory,
         LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->itemRepository = $itemRepository;
         $this->logger = $logger;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->mainItemResource = $mainItemResource;
+        $this->mainItemFactory = $mainItemFactory;
     }
 
     /**
@@ -73,9 +101,44 @@ class Data extends AbstractHelper
         return $this->scopeConfig->getValue(self::XML_PATH_STRATEGY, ScopeInterface::SCOPE_STORE);
     }
 
-    public function recalculate()
+    /**
+     * Recalculate qty for main wishlist item
+     * @param $itemId
+     * @return void
+     */
+    public function recalculate($itemId)
     {
-        //@TODO Add logic for main item recalculation
+        $mainItemModel = $this->mainItemFactory->create();
+        $this->mainItemResource->load($mainItemModel, $itemId);
+        $this->searchCriteriaBuilder->addFilter(
+            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ITEM,
+            $itemId
+        );
+        $items = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
+
+        if (!count($items)) {
+            try {
+                $this->mainItemResource->delete($mainItemModel);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+            }
+        }
+
+        $qty = 0;
+        foreach ($items as $item) {
+            $qty += $item->getQty();
+        }
+
+        if ($mainItemModel->getId()) {
+            $mainItemModel->setQty($qty);
+            try {
+                $this->mainItemResource->save($mainItemModel);
+            } catch (AlreadyExistsException $e) {
+                $this->logger->error($e->getMessage());
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+            }
+        }
     }
 
     /**

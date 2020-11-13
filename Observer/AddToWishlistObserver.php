@@ -113,6 +113,8 @@ class AddToWishlistObserver implements ObserverInterface
         } else {
             $this->processNewItemCreation($mainItemId, $multipleWishlist, $qty);
         }
+
+        $this->moduleHelper->recalculate($mainItemId);
     }
 
     /**

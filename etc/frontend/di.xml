@@ -27,4 +27,12 @@
     <type name="Magento\Wishlist\Controller\Index\Update">
         <plugin name="update_multiple_wishlist_items_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Update" />
     </type>
+
+    <type name="Magento\Wishlist\Model\Item">
+        <plugin name="multiple_wishlist_item_add_to_cart" type="BKozlic\MultipleWishlist\Plugin\Model\Wishlist\Item" />
+    </type>
+
+    <type name="Magento\Wishlist\Helper\Data">
+        <plugin name="add_to_cart_params_change_plugin" type="BKozlic\MultipleWishlist\Plugin\Helper\Wishlist\Data" />
+    </type>
 </config>
