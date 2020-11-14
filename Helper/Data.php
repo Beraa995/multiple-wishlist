@@ -102,6 +102,35 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Returns filtered multiple wishlist item collection
+     *
+     * @param false|null|int $wishlist
+     * @param null|int $itemId
+     * @return array
+     */
+    public function getMultipleWishlistItems($wishlist = false, $itemId = null)
+    {
+        if ($wishlist !== false) {
+            $this->searchCriteriaBuilder->addFilter(
+                MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
+                $wishlist,
+                $wishlist ? 'eq' : 'null'
+            );
+        }
+
+        if ($itemId) {
+            $this->searchCriteriaBuilder->addFilter(
+                MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ITEM,
+                $itemId
+            );
+        }
+
+        $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
+
+        return $this->makeUniqueCollection($itemList);
+    }
+
+    /**
      * Recalculate qty for main wishlist item
      * @param int $itemId
      * @return void
@@ -110,11 +139,7 @@ class Data extends AbstractHelper
     {
         $mainItemModel = $this->mainItemFactory->create();
         $this->mainItemResource->load($mainItemModel, $itemId);
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ITEM,
-            $itemId
-        );
-        $items = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
+        $items = $this->getMultipleWishlistItems(false, $itemId);
 
         if (!count($items)) {
             try {

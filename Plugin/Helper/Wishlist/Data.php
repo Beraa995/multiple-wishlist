@@ -93,7 +93,6 @@ class Data
             return $result;
         }
 
-
         $params = $this->addWishlistParam($result);
         $params['action'] = $this->urlBuilder->getUrl('multiplewishlist/item/remove', []);
 

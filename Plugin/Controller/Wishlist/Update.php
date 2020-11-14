@@ -138,17 +138,11 @@ class Update
             return $mainExecute;
         }
 
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
-            $multipleWishlist,
-            $multipleWishlist ? 'eq' : 'null'
-        );
-        $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
-        $uniqueList = $this->moduleHelper->makeUniqueCollection($itemList);
+        $itemList = $this->moduleHelper->getMultipleWishlistItems($multipleWishlist);
         $descriptions = $request->getParam('description');
         $qtys = $request->getParam('qty');
 
-        foreach ($uniqueList as $item) {
+        foreach ($itemList as $item) {
             if (isset($descriptions[$item->getWishlistItemId()]) &&
                 $descriptions[$item->getWishlistItemId()] !== $item->getDescription()) {
                 $item->setDescription($descriptions[$item->getWishlistItemId()]);

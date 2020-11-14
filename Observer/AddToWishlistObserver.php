@@ -88,6 +88,7 @@ class AddToWishlistObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         //@TODO After add/remove/update recalculate main item qty
+        //@TODO Check if checking isEnabled is used on every customization
         if (!$this->moduleHelper->isEnabled()) {
             return;
         }
@@ -151,23 +152,11 @@ class AddToWishlistObserver implements ObserverInterface
      */
     protected function getExistingItem(int $itemId, $multipleWishlistId)
     {
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
-            $multipleWishlistId,
-            $multipleWishlistId ? 'eq' : 'null'
-        );
-
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ITEM,
-            $itemId
-        );
-
-        $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
-        $uniqueList = $this->moduleHelper->makeUniqueCollection($itemList);
-        if (!count($uniqueList)) {
+        $itemList = $this->moduleHelper->getMultipleWishlistItems($multipleWishlistId, $itemId);
+        if (!count($itemList)) {
             return null;
         }
 
-        return array_shift($uniqueList);
+        return array_shift($itemList);
     }
 }

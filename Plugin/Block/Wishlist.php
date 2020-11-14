@@ -7,12 +7,14 @@
  */
 namespace BKozlic\MultipleWishlist\Plugin\Block;
 
-use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Framework\UrlInterface;
 use Magento\Wishlist\Block\Customer\Wishlist as MagentoWishlistBlock;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
 
@@ -42,23 +44,62 @@ class Wishlist
     protected $moduleHelper;
 
     /**
+     * @var Json
+     */
+    protected $json;
+
+    /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
+
+    /**
      * Wishlist Block Plugin constructor.
      *
      * @param RequestInterface $request
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param Data $moduleHelper
+     * @param Json $json
+     * @param UrlInterface $urlBuilder
      */
     public function __construct(
         RequestInterface $request,
         MultipleWishlistItemRepositoryInterface $itemRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        Data $moduleHelper
+        Data $moduleHelper,
+        Json $json,
+        UrlInterface $urlBuilder
     ) {
         $this->request = $request;
         $this->itemRepository = $itemRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->moduleHelper = $moduleHelper;
+        $this->json = $json;
+        $this->urlBuilder = $urlBuilder;
+    }
+
+    /**
+     * Changes add all to cart route
+     *
+     * @param MagentoWishlistBlock $subject
+     * @param string $result
+     * @return string
+     */
+    public function afterGetAddAllToCartParams(MagentoWishlistBlock $subject, string $result)
+    {
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+        $paramsArray = $this->json->unserialize($result);
+
+        if ($multipleWishlist) {
+            $paramsArray['data'][MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
+        }
+
+        return $this->json->serialize($paramsArray);
     }
 
     /**
@@ -98,16 +139,9 @@ class Wishlist
     protected function getMultipleWishlistItemIdToQtyMapper($multipleWishlistId)
     {
         //@TODO If there are no items to the default wishlist use first one from the list
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
-            $multipleWishlistId,
-            $multipleWishlistId ? 'eq' : 'null'
-        );
-
-        $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
-        $uniqueList = $this->moduleHelper->makeUniqueCollection($itemList);
+        $itemList = $this->moduleHelper->getMultipleWishlistItems($multipleWishlistId);
         $ids = [];
-        foreach ($uniqueList as $item) {
+        foreach ($itemList as $item) {
             $ids[$item->getWishlistItemId()]['qty'] = $item->getQty();
             $ids[$item->getWishlistItemId()]['desc'] = $item->getDescription();
         }

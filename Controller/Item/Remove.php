@@ -89,7 +89,7 @@ class Remove extends Action implements HttpPostActionInterface
 
         $mainItemId = $this->getRequest()->getParam('item');
         $multipleWishlist = $this->getRequest()->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
-        $items = $this->getItems($mainItemId, $multipleWishlist);
+        $items = $this->moduleHelper->getMultipleWishlistItems($multipleWishlist, $mainItemId);
 
         foreach ($items as $item) {
             try {
@@ -105,27 +105,5 @@ class Remove extends Action implements HttpPostActionInterface
         }
 
         return $resultRedirect->setPath($this->_redirect->getRefererUrl());
-    }
-
-    /**
-     * Returns items for removal
-     * @param int $item
-     * @param int $wishlist
-     * @return MultipleWishlistItemInterface[]
-     */
-    protected function getItems($item, $wishlist)
-    {
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
-            $wishlist,
-            $wishlist ? 'eq' : 'null'
-        );
-
-        $this->searchCriteriaBuilder->addFilter(
-            MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ITEM,
-            $item
-        );
-
-        return $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
     }
 }
