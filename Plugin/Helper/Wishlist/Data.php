@@ -100,6 +100,35 @@ class Data
     }
 
     /**
+     * Add multiple wishlist id to the configure url
+     *
+     * @param WishlistHelper $subject
+     * @param $result
+     * @param $item
+     * @return string
+     */
+    public function afterGetConfigureUrl(WishlistHelper $subject, $result, $item)
+    {
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+        if ($multipleWishlist) {
+            $result = $this->urlBuilder->getUrl(
+                'wishlist/index/configure',
+                [
+                    'id' => $item->getWishlistItemId(),
+                    'product_id' => $item->getProductId(),
+                    MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlist
+                ]
+            );
+        }
+
+        return $result;
+    }
+
+    /**
      * Adds param to the array
      *
      * @param $params

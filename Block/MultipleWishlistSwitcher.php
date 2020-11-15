@@ -15,7 +15,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Wishlist\Helper\Data;
-
+//@TODO Change item count in the my account dropdown
 /**
  * Block class for multiple wishlist switcher rendering
  */
@@ -135,7 +135,7 @@ class MultipleWishlistSwitcher extends Template
         $urlParams['_escape'] = true;
         $urlParams['_use_rewrite'] = true;
         $urlParams['_fragment'] = null;
-        $urlParams['_query'] = [MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlistId];
+        $urlParams[MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlistId;
 
         return $this->getUrl('*/*/*', $urlParams);
     }
