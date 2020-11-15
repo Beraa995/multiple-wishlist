@@ -7,6 +7,7 @@
  */
 namespace BKozlic\MultipleWishlist\Observer;
 
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
@@ -22,7 +23,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Process multiple wishlist data after item is added to the wishlist
  */
-class AddToWishlistObserver implements ObserverInterface
+class AddProductToWishlistObserver implements ObserverInterface
 {
     /**
      * @var RequestInterface
@@ -89,33 +90,36 @@ class AddToWishlistObserver implements ObserverInterface
     {
         //@TODO After add/remove/update recalculate main item qty
         //@TODO Check if checking isEnabled is used on every customization
+        //@TODO Add multiple wishlist param to the update wishlist button on product detail
         if (!$this->moduleHelper->isEnabled()) {
             return;
         }
 
-        $multipleWishlist = $this->request->getParam('multiple_wishlist_id');
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         $qty = $this->request->getParam('qty') ?: 1;
-        $mainItem = $observer->getEvent()->getItem();
+        $items = $observer->getEvent()->getItems();
 
-        if (!$mainItem || !$mainItem->getId()) {
-            return;
-        }
-
-        $mainItemId = $mainItem->getId();
-        $existingItem = $this->getExistingItem($mainItemId, $multipleWishlist);
-
-        if ($existingItem) {
-            try {
-                $existingItem->setQty($existingItem->getQty() + $qty);
-                $this->itemRepository->save($existingItem);
-            } catch (CouldNotSaveException $e) {
-                $this->logger->error($e->getMessage());
+        foreach ($items as $item) {
+            if (!$item || !$item->getId()) {
+                continue;
             }
-        } else {
-            $this->processNewItemCreation($mainItemId, $multipleWishlist, $qty);
-        }
 
-        $this->moduleHelper->recalculate($mainItemId);
+            $itemId = $item->getId();
+            $existingItem = $this->getExistingItem($itemId, $multipleWishlist);
+
+            if ($existingItem) {
+                try {
+                    $existingItem->setQty($existingItem->getQty() + $qty);
+                    $this->itemRepository->save($existingItem);
+                } catch (CouldNotSaveException $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            } else {
+                $this->processNewItemCreation($itemId, $multipleWishlist, $qty);
+            }
+
+            $this->moduleHelper->recalculate($itemId);
+        }
     }
 
     /**

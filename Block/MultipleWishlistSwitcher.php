@@ -130,6 +130,7 @@ class MultipleWishlistSwitcher extends Template
      */
     public function getMultipleWishlistUrl($multipleWishlistId)
     {
+        //@TODO Fix when url is /wishlist
         $urlParams = [];
         $urlParams['_current'] = true;
         $urlParams['_escape'] = true;
@@ -137,7 +138,7 @@ class MultipleWishlistSwitcher extends Template
         $urlParams['_fragment'] = null;
         $urlParams[MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlistId;
 
-        return $this->getUrl('*/*/*', $urlParams);
+        return $this->getUrl('*', $urlParams);
     }
 
     /**

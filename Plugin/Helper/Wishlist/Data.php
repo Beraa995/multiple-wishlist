@@ -79,6 +79,26 @@ class Data
     }
 
     /**
+     * Add multiple wishlist id to the update url params
+     *
+     * @param WishlistHelper $subject
+     * @param $result
+     * @param $item
+     * @return string
+     */
+    public function afterGetUpdateParams(WishlistHelper $subject, $result, $item)
+    {
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
+        //@TODO Prevent removal of not configured products in other wishlists which are same as the current.
+        $params = $this->addWishlistParam($result);
+
+        return $this->json->serialize($params);
+    }
+
+    /**
      * Add multiple wishlist id to the delete params and change url
      *
      * @param WishlistHelper $subject
@@ -100,7 +120,7 @@ class Data
     }
 
     /**
-     * Add multiple wishlist id to the configure url
+     * Add multiple wishlist id to the configure url params
      *
      * @param WishlistHelper $subject
      * @param $result
@@ -109,6 +129,7 @@ class Data
      */
     public function afterGetConfigureUrl(WishlistHelper $subject, $result, $item)
     {
+        //@TODO Provide correct qty
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

@@ -8,7 +8,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="wishlist_add_product">
-        <observer name="multiple_wishlist_process_observer" instance="BKozlic\MultipleWishlist\Observer\AddToWishlistObserver" />
+    <event name="wishlist_product_add_after">
+        <observer name="multiple_wishlist_process_add_observer" instance="BKozlic\MultipleWishlist\Observer\AddProductToWishlistObserver" />
     </event>
 </config>
