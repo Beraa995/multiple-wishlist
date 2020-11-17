@@ -69,6 +69,7 @@ class Data
      */
     public function afterGetAddToCartParams(WishlistHelper $subject, $result, $item, $addReferer = false)
     {
+        //@TODO Check sharedAddAllToCart from the helper
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

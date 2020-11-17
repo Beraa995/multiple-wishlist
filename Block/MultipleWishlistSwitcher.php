@@ -103,6 +103,18 @@ class MultipleWishlistSwitcher extends Template
     }
 
     /**
+     * Checks if there are the items in the default wishlist
+     *
+     * @return bool
+     */
+    public function defaultWishlistHasItems()
+    {
+        $items = $this->moduleHelper->getMultipleWishlistItems(null);
+
+        return (bool)count($items);
+    }
+
+    /**
      * Checks if main wishlist is enabled
      *
      * @return bool
@@ -130,15 +142,14 @@ class MultipleWishlistSwitcher extends Template
      */
     public function getMultipleWishlistUrl($multipleWishlistId)
     {
-        //@TODO Fix when url is /wishlist
-        $urlParams = [];
-        $urlParams['_current'] = true;
-        $urlParams['_escape'] = true;
-        $urlParams['_use_rewrite'] = true;
-        $urlParams['_fragment'] = null;
-        $urlParams[MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlistId;
+        $urlParams = [
+            '_current' => true,
+            '_escape' => true,
+            '_fragment' => null,
+            MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlistId
+        ];
 
-        return $this->getUrl('*', $urlParams);
+        return $this->getUrl('*/*/*', $urlParams);
     }
 
     /**

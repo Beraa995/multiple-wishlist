@@ -8,15 +8,16 @@
 namespace BKozlic\MultipleWishlist\Plugin\Controller\Wishlist;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
-use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
 use Closure;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Wishlist\Controller\Index\Update as WishlistUpdate;
+use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Model\LocaleQuantityProcessor;
 use Psr\Log\LoggerInterface;
 
@@ -56,6 +57,16 @@ class Update
     protected $quantityProcessor;
 
     /**
+     * @var ResultFactory
+     */
+    protected $resultFactory;
+
+    /**
+     * @var WishlistProviderInterface
+     */
+    protected $wishlistProvider;
+
+    /**
      * Update Plugin constructor.
      * @param Validator $formKeyValidator
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
@@ -63,6 +74,8 @@ class Update
      * @param Data $moduleHelper
      * @param LoggerInterface $logger
      * @param LocaleQuantityProcessor $quantityProcessor
+     * @param ResultFactory $resultFactory
+     * @param WishlistProviderInterface $wishlistProvider
      */
     public function __construct(
         Validator $formKeyValidator,
@@ -70,7 +83,9 @@ class Update
         SearchCriteriaBuilder $searchCriteriaBuilder,
         Data $moduleHelper,
         LoggerInterface $logger,
-        LocaleQuantityProcessor $quantityProcessor
+        LocaleQuantityProcessor $quantityProcessor,
+        ResultFactory $resultFactory,
+        WishlistProviderInterface $wishlistProvider
     ) {
         $this->formKeyValidator = $formKeyValidator;
         $this->itemRepository = $itemRepository;
@@ -78,6 +93,8 @@ class Update
         $this->moduleHelper = $moduleHelper;
         $this->logger = $logger;
         $this->quantityProcessor = $quantityProcessor;
+        $this->resultFactory = $resultFactory;
+        $this->wishlistProvider = $wishlistProvider;
     }
 
     /**
@@ -124,12 +141,19 @@ class Update
     {
         $mainExecute = $proceed();
         //@TODO Redirect to selected wishlist.
+        //@TODO After configure product description is removed.
+        //@TODO Wishlist shared/index contains wrong items.
         if (!$this->moduleHelper->isEnabled()) {
             return $mainExecute;
         }
 
         $request = $subject->getRequest();
         if (!$this->formKeyValidator->validate($request)) {
+            return $mainExecute;
+        }
+
+        $wishlist = $this->wishlistProvider->getWishlist();
+        if (!$wishlist) {
             return $mainExecute;
         }
 
@@ -149,6 +173,7 @@ class Update
                 $item->setData('changed', true);
             }
 
+            //@TODO Check if there is error message. Check Update controller.
             if (isset($qtys[$item->getWishlistItemId()]) &&
                 $qtys[$item->getWishlistItemId()] != $item->getQty()) {
                 $qty = $this->quantityProcessor->process($qtys[$item->getWishlistItemId()]);
@@ -171,7 +196,16 @@ class Update
             }
         }
 
-        $subject->getRequest()->setParams(['qty' => $qtys]);
+        if ($request->getParam('save_and_share') !== null) {
+            //@TODO Redirect to the right wishlist after share
+            $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+            $resultRedirect->setPath('*/*/share', [
+                'wishlist_id' => $wishlist->getId(),
+                MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlist
+            ]);
+            return $resultRedirect;
+        }
+
         return $mainExecute;
     }
 }

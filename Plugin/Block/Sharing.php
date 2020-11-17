@@ -10,14 +10,19 @@ namespace BKozlic\MultipleWishlist\Plugin\Block;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Wishlist\Block\Customer\Wishlist as MagentoWishlistBlock;
+use Magento\Framework\UrlInterface;
+use Magento\Wishlist\Block\Customer\Sharing as MagentoSharingBlock;
 
 /**
- * Plugin class for changing add all to cart route
+ * Plugin class for adding multiple wishlist id to the send url
  */
-class Wishlist
+class Sharing
 {
+    /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
+
     /**
      * @var RequestInterface
      */
@@ -29,47 +34,38 @@ class Wishlist
     protected $moduleHelper;
 
     /**
-     * @var Json
-     */
-    protected $json;
-
-    /**
-     * Wishlist Block Plugin constructor.
-     *
+     * Sharing Block Plugin constructor.
      * @param RequestInterface $request
+     * @param UrlInterface $urlBuilder
      * @param Data $moduleHelper
-     * @param Json $json
      */
     public function __construct(
         RequestInterface $request,
-        Data $moduleHelper,
-        Json $json
+        UrlInterface $urlBuilder,
+        Data $moduleHelper
     ) {
+        $this->urlBuilder = $urlBuilder;
         $this->request = $request;
         $this->moduleHelper = $moduleHelper;
-        $this->json = $json;
     }
 
     /**
-     * Changes add all to cart route
+     * Add multiple wishlist param to the send url
      *
-     * @param MagentoWishlistBlock $subject
-     * @param string $result
+     * @param MagentoSharingBlock $subject
+     * @param $result
      * @return string
      */
-    public function afterGetAddAllToCartParams(MagentoWishlistBlock $subject, string $result)
+    public function afterGetSendUrl(MagentoSharingBlock $subject, $result)
     {
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }
 
         $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
-        $paramsArray = $this->json->unserialize($result);
 
-        if ($multipleWishlist) {
-            $paramsArray['data'][MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
-        }
-
-        return $this->json->serialize($paramsArray);
+        return $this->urlBuilder->getUrl('wishlist/index/send', [
+            MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlist
+        ]);
     }
 }

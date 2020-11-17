@@ -19,7 +19,6 @@ class MultipleWishlistFormInput extends Column
      */
     public function getAdditionalHtml()
     {
-        //@TODO Check if ifconfig in layout xml iw working
         $paramName = MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME;
         $multipleWishlistId = $this->getRequest()->getParam($paramName);
 
