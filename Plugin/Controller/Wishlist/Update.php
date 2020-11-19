@@ -141,6 +141,7 @@ class Update
     {
         $mainExecute = $proceed();
         //@TODO Redirect to selected wishlist.
+        //@TODO Clear all messages and add messages in the plugin(s).
         //@TODO After configure product description is removed.
         //@TODO Wishlist shared/index contains wrong items.
         if (!$this->moduleHelper->isEnabled()) {

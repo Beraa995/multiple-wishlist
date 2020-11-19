@@ -28,6 +28,10 @@
         <plugin name="add_param_to_redirect_url_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Cart" />
     </type>
 
+    <type name="Magento\Wishlist\Controller\Index\Send">
+        <plugin name="wishlist_share_redirect_after_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Send" />
+    </type>
+
     <type name="Magento\Wishlist\Block\Customer\Wishlist">
         <plugin name="change_add_all_to_cart_plugin" type="BKozlic\MultipleWishlist\Plugin\Block\Wishlist" />
     </type>

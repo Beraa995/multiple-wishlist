@@ -10,20 +10,18 @@ namespace BKozlic\MultipleWishlist\Plugin\Controller\Wishlist;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Wishlist\Controller\Index\Cart as MagentoWishlistController;
-use Magento\Wishlist\Model\ItemFactory;
-use Magento\Wishlist\Model\ResourceModel\Item;
+use Magento\Wishlist\Controller\Index\Send as MagentoWishlistController;
+use Magento\Wishlist\Controller\WishlistProviderInterface;
 
 /**
- * Plugin class for adding multiple wishlist param to the configure url
+ * Plugin class for redirecting to the shared wishlist after share
  */
-class Cart
+class Send
 {
     /**
      * @var RequestInterface
@@ -51,25 +49,19 @@ class Cart
     protected $urlBuilder;
 
     /**
-     * @var ItemFactory
+     * @var WishlistProviderInterface
      */
-    protected $itemFactory;
+    protected $wishlistProvider;
 
     /**
-     * @var Item
-     */
-    protected $itemResource;
-
-    /**
-     * Wishlist Index Controller Plugin constructor.
+     * Wishlist Send Controller Plugin constructor.
      *
      * @param RequestInterface $request
      * @param Data $moduleHelper
      * @param ResultFactory $resultFactory
      * @param ManagerInterface $messageManager
      * @param UrlInterface $urlBuilder
-     * @param ItemFactory $itemFactory
-     * @param Item $itemResource
+     * @param WishlistProviderInterface $wishlistProvider
      */
     public function __construct(
         RequestInterface $request,
@@ -77,24 +69,22 @@ class Cart
         ResultFactory $resultFactory,
         ManagerInterface $messageManager,
         UrlInterface $urlBuilder,
-        ItemFactory $itemFactory,
-        Item $itemResource
+        WishlistProviderInterface $wishlistProvider
     ) {
         $this->request = $request;
         $this->moduleHelper = $moduleHelper;
         $this->resultFactory = $resultFactory;
         $this->messageManager = $messageManager;
         $this->urlBuilder = $urlBuilder;
-        $this->itemFactory = $itemFactory;
-        $this->itemResource = $itemResource;
+        $this->wishlistProvider = $wishlistProvider;
     }
 
     /**
-     * Change configure url redirect
+     * Redirect to the right wishlist after share
      *
      * @param MagentoWishlistController $subject
-     * @param Redirect|Json $result
-     * @return Redirect|Json
+     * @param Redirect $result
+     * @return Redirect
      */
     public function afterExecute(MagentoWishlistController $subject, $result)
     {
@@ -102,33 +92,24 @@ class Cart
             return $result;
         }
 
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
-        $itemId = $this->request->getParam('item');
-        $item = $this->itemFactory->create();
-        $this->itemResource->load($item, $itemId);
-
-        if (!$item->getId()) {
+        $wishlist = $this->wishlistProvider->getWishlist();
+        if (!$wishlist) {
             return $result;
         }
 
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         $params = [
-            'id' => $item->getId(),
-            'product_id' => $item->getProductId(),
+            'wishlist_id' => $wishlist->getId()
         ];
 
         if ($multipleWishlist) {
             $params[MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
         }
 
-        $url = $this->urlBuilder->getUrl('*/*/configure/', $params);
-        $noticeMessages = $this->messageManager->getMessages()->getItemsByType(MessageInterface::TYPE_NOTICE);
-        if (count($noticeMessages)) {
-            //@TODO Add logic for ajax
-            if ($subject->getRequest()->isAjax()) {
-                return $result;
-            }
-
+        $url = $this->urlBuilder->getUrl('*/*', $params);
+        $successMessages = $this->messageManager->getMessages()->getItemsByType(MessageInterface::TYPE_SUCCESS);
+        if (count($successMessages)) {
             return $resultRedirect->setUrl($url);
         }
 
