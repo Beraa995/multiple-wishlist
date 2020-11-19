@@ -7,8 +7,11 @@
  */
 namespace BKozlic\MultipleWishlist\Helper;
 
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
+use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
+use Exception;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -30,6 +33,9 @@ class Data extends AbstractHelper
      */
     const XML_PATH_ENABLED = 'wishlist/multiple_wishlist_general/enabled';
     const XML_PATH_STRATEGY = 'wishlist/multiple_wishlist_general/wishlist_strategy';
+    const XML_PATH_LIMIT = 'wishlist/multiple_wishlist_general/wishlist_limit';
+    const DEFAULT_LIMIT = 100;
+    const MAX_LIMIT = 1000;
 
     /**
      * @var MultipleWishlistItemRepositoryInterface
@@ -57,12 +63,18 @@ class Data extends AbstractHelper
     protected $mainItemFactory;
 
     /**
+     * @var MultipleWishlistRepositoryInterface
+     */
+    protected $multipleWishlistRepository;
+
+    /**
      * Data constructor.
      * @param Context $context
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param Item $mainItemResource
      * @param ItemFactory $mainItemFactory
+     * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -71,6 +83,7 @@ class Data extends AbstractHelper
         SearchCriteriaBuilder $searchCriteriaBuilder,
         Item $mainItemResource,
         ItemFactory $mainItemFactory,
+        MultipleWishlistRepositoryInterface $multipleWishlistRepository,
         LoggerInterface $logger
     ) {
         parent::__construct($context);
@@ -79,6 +92,7 @@ class Data extends AbstractHelper
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->mainItemResource = $mainItemResource;
         $this->mainItemFactory = $mainItemFactory;
+        $this->multipleWishlistRepository = $multipleWishlistRepository;
     }
 
     /**
@@ -99,6 +113,26 @@ class Data extends AbstractHelper
     public function canShowModal()
     {
         return $this->scopeConfig->getValue(self::XML_PATH_STRATEGY, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Returns wishlist limit number
+     *
+     * @return int
+     */
+    public function getWishlistLimit()
+    {
+        //@TODO Check if value is string, float, empty, negative.
+        $limit = $this->scopeConfig->getValue(self::XML_PATH_LIMIT, ScopeInterface::SCOPE_STORE);
+        if (!is_numeric($limit) || $limit < 0) {
+            return self::DEFAULT_LIMIT;
+        }
+
+        if ($limit > self::MAX_LIMIT) {
+            return self::MAX_LIMIT;
+        }
+
+        return (int)$limit;
     }
 
     /**
@@ -131,6 +165,26 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Returns first multiple wishlist for a given wishlist id
+     *
+     * @param int $wishlistId
+     * @return MultipleWishlistInterface
+     */
+    public function getFirstMultipleWishlist($wishlistId)
+    {
+        $this->searchCriteriaBuilder->addFilter(
+            MultipleWishlistInterface::WISHLIST_ID,
+            $wishlistId
+        );
+
+        $multipleWishlistList = $this->multipleWishlistRepository->getList(
+            $this->searchCriteriaBuilder->create()
+        )->getItems();
+
+        return array_shift($multipleWishlistList);
+    }
+
+    /**
      * Recalculate qty for main wishlist item
      * @param int $itemId
      * @return void
@@ -144,7 +198,7 @@ class Data extends AbstractHelper
         if (!count($items)) {
             try {
                 $this->mainItemResource->delete($mainItemModel);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }
         }
@@ -160,7 +214,7 @@ class Data extends AbstractHelper
                 $this->mainItemResource->save($mainItemModel);
             } catch (AlreadyExistsException $e) {
                 $this->logger->error($e->getMessage());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->logger->error($e->getMessage());
             }
         }

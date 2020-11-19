@@ -19,10 +19,16 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="wishlist_strategy" translate="label" type="select" sortOrder="10"
+                <field id="wishlist_strategy" translate="label" type="select" sortOrder="20"
                        showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Add To Wishlist Strategy</label>
                     <source_model>BKozlic\MultipleWishlist\Model\Config\Source\WishlistAddStrategy</source_model>
+                </field>
+
+                <field id="wishlist_limit" translate="label" type="text" sortOrder="30"
+                       showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add To Wishlist Strategy</label>
+                    <comment>Max: 1000. Default limit: 100</comment>
                 </field>
             </group>
         </section>

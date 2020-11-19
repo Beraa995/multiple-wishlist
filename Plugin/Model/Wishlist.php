@@ -8,10 +8,13 @@
 namespace BKozlic\MultipleWishlist\Plugin\Model;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
+use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
-use Magento\Wishlist\Model\Wishlist as MagentoWishlistModel;
+use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
+use Magento\Wishlist\Model\Wishlist as MagentoWishlistModel;
 
 /**
  * Filter item collection class
@@ -29,16 +32,25 @@ class Wishlist
     protected $request;
 
     /**
-     * Item Plugin constructor.
+     * @var WishlistProviderInterface
+     */
+    protected $wishlistProvider;
+
+    /**
+     * Wishlist Model Plugin constructor.
+     *
      * @param RequestInterface $request
      * @param Data $moduleHelper
+     * @param WishlistProviderInterface $wishlistProvider
      */
     public function __construct(
         RequestInterface $request,
-        Data $moduleHelper
+        Data $moduleHelper,
+        WishlistProviderInterface $wishlistProvider
     ) {
         $this->moduleHelper = $moduleHelper;
         $this->request = $request;
+        $this->wishlistProvider = $wishlistProvider;
     }
 
     /**
@@ -77,8 +89,25 @@ class Wishlist
      */
     protected function getMultipleWishlistItemIdToQtyMapper($multipleWishlistId)
     {
-        //@TODO If there are no items to the default wishlist use first one from the list
         $itemList = $this->moduleHelper->getMultipleWishlistItems($multipleWishlistId);
+
+        /**
+         * If there are no items in the default wishlist, than the items
+         * from the first wishlist will be returned. This is because
+         * wishlist switcher is not showing empty default wishlist.
+         * The sort must not be applied in the multiple wishlist switcher.
+         */
+        if (!$multipleWishlistId && !count($itemList)) {
+            $wishlist = $this->wishlistProvider->getWishlist()->getId();
+            $firstWishlist = $this->moduleHelper->getFirstMultipleWishlist($wishlist);
+
+            if ($firstWishlist) {
+                $itemList = $this->moduleHelper->getMultipleWishlistItems(
+                    $firstWishlist->getId()
+                );
+            }
+        }
+
         $ids = [];
         foreach ($itemList as $item) {
             $ids[$item->getWishlistItemId()]['qty'] = $item->getQty();

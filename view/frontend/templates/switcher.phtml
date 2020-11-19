@@ -2,8 +2,12 @@
 /**
  * @var \BKozlic\MultipleWishlist\Block\MultipleWishlistSwitcher $block
  */
+
+$collection = $block->getCollection();
 ?>
-<?php if ($block->isWishlistAllowed() && $block->isMultipleWishlistAllowed()): ?>
+<?php if ($block->isWishlistAllowed() &&
+    $block->isMultipleWishlistAllowed() &&
+    count($collection)): ?>
     <div class="toolbar wishlist-switcher">
         <label for="wishlist-select-switcher" class="wishlist-switcher-label">
             <?= $block->escapeHtml(__('Wishlist')); ?>
@@ -18,7 +22,7 @@
                 </option>
             <?php endif; ?>
 
-            <?php foreach ($block->getCollection() as $multipleWishlist): ?>
+            <?php foreach ($collection as $multipleWishlist): ?>
                 <option value="<?= $block->escapeHtmlAttr($block->getMultipleWishlistUrl($multipleWishlist->getId())) ?>"
                     <?php if ($block->isSelectedWishlist($multipleWishlist->getId())): ?>
                         selected

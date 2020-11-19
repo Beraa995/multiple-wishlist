@@ -14,6 +14,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Result\Page;
 use Magento\Wishlist\Controller\Index\Index as MagentoWishlistController;
+use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -42,23 +43,31 @@ class Index
     protected $logger;
 
     /**
+     * @var WishlistProviderInterface
+     */
+    protected $wishlistProvider;
+
+    /**
      * Wishlist Index Controller Plugin constructor.
      *
      * @param RequestInterface $request
      * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param Data $moduleHelper
      * @param LoggerInterface $logger
+     * @param WishlistProviderInterface $wishlistProvider
      */
     public function __construct(
         RequestInterface $request,
         MultipleWishlistRepositoryInterface $multipleWishlistRepository,
         Data $moduleHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        WishlistProviderInterface $wishlistProvider
     ) {
         $this->request = $request;
         $this->moduleHelper = $moduleHelper;
         $this->multipleWishlistRepository = $multipleWishlistRepository;
         $this->logger = $logger;
+        $this->wishlistProvider = $wishlistProvider;
     }
 
     /**
@@ -83,8 +92,23 @@ class Index
             } catch (NoSuchEntityException $e) {
                 $this->logger->error($e->getMessage());
             }
-        } else {
-            $result->getConfig()->getTitle()->set(__('Default Wishlist'));
+        }
+
+        if (!$multipleWishlistId) {
+            $firstWishlist = $this->moduleHelper->getFirstMultipleWishlist(
+                $this->wishlistProvider->getWishlist()->getId()
+            );
+            $items = $this->moduleHelper->getMultipleWishlistItems(null);
+
+            if (!count($items) && $firstWishlist) {
+                $result->getConfig()->getTitle()->set($firstWishlist->getName());
+                $this->request->setParams(array_merge(
+                    $this->request->getParams(),
+                    [MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $firstWishlist->getId()]
+                ));
+            } else {
+                $result->getConfig()->getTitle()->set(__('Default Wishlist'));
+            }
         }
 
         return $result;
