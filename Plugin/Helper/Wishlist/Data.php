@@ -75,12 +75,35 @@ class Data
         }
 
         $params = $this->addWishlistParam($result);
-
         return $this->json->serialize($params);
     }
 
     /**
-     * Add multiple wishlist id to the update url params
+     * Add multiple wishlist id to the wishlist url
+     *
+     * @param WishlistHelper $subject
+     * @param string $result
+     * @param int $wishlistId
+     * @return string
+     */
+    public function afterGetListUrl(WishlistHelper $subject, $result, $wishlistId = null)
+    {
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+        if (!$multipleWishlist) {
+            return $result;
+        }
+
+        $params = [];
+        if ($wishlistId) {
+            $params['wishlist_id'] = $wishlistId;
+        }
+
+        $params[MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
+        return $this->urlBuilder->getUrl('wishlist', $params);
+    }
+
+    /**
+     * Add multiple wishlist id and qty to the update url params
      *
      * @param WishlistHelper $subject
      * @param $result
@@ -93,9 +116,7 @@ class Data
             return $result;
         }
 
-        //@TODO Prevent removal of not configured products in other wishlists which are same as the current.
         $params = $this->addWishlistParam($result);
-
         return $this->json->serialize($params);
     }
 
@@ -115,8 +136,6 @@ class Data
         }
 
         $params = $this->addWishlistParam($result);
-        $params['action'] = $this->urlBuilder->getUrl('multiplewishlist/item/remove', []);
-
         return $this->json->serialize($params);
     }
 
@@ -130,7 +149,6 @@ class Data
      */
     public function afterGetConfigureUrl(WishlistHelper $subject, $result, $item)
     {
-        //@TODO Provide correct qty
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

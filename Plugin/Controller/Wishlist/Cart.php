@@ -9,10 +9,13 @@ namespace BKozlic\MultipleWishlist\Plugin\Controller\Wishlist;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
+use Magento\Checkout\Helper\Cart as CartHelper;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\UrlInterface;
@@ -61,6 +64,16 @@ class Cart
     protected $itemResource;
 
     /**
+     * @var RedirectInterface
+     */
+    protected $redirect;
+
+    /**
+     * @var CartHelper
+     */
+    protected $cartHelper;
+
+    /**
      * Wishlist Index Controller Plugin constructor.
      *
      * @param RequestInterface $request
@@ -70,6 +83,8 @@ class Cart
      * @param UrlInterface $urlBuilder
      * @param ItemFactory $itemFactory
      * @param Item $itemResource
+     * @param RedirectInterface $redirect
+     * @param CartHelper $cartHelper
      */
     public function __construct(
         RequestInterface $request,
@@ -78,7 +93,9 @@ class Cart
         ManagerInterface $messageManager,
         UrlInterface $urlBuilder,
         ItemFactory $itemFactory,
-        Item $itemResource
+        Item $itemResource,
+        RedirectInterface $redirect,
+        CartHelper $cartHelper
     ) {
         $this->request = $request;
         $this->moduleHelper = $moduleHelper;
@@ -87,6 +104,8 @@ class Cart
         $this->urlBuilder = $urlBuilder;
         $this->itemFactory = $itemFactory;
         $this->itemResource = $itemResource;
+        $this->redirect = $redirect;
+        $this->cartHelper = $cartHelper;
     }
 
     /**
@@ -94,7 +113,7 @@ class Cart
      *
      * @param MagentoWishlistController $subject
      * @param Redirect|Json $result
-     * @return Redirect|Json
+     * @return ResultInterface
      */
     public function afterExecute(MagentoWishlistController $subject, $result)
     {
@@ -102,8 +121,6 @@ class Cart
             return $result;
         }
 
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         $itemId = $this->request->getParam('item');
         $item = $this->itemFactory->create();
         $this->itemResource->load($item, $itemId);
@@ -117,21 +134,38 @@ class Cart
             'product_id' => $item->getProductId(),
         ];
 
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         if ($multipleWishlist) {
             $params[MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME] = $multipleWishlist;
         }
 
-        $url = $this->urlBuilder->getUrl('*/*/configure/', $params);
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        $redirectUrl = $this->urlBuilder->getUrl('*/*', [
+            MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME => $multipleWishlist
+        ]);
+        $configureUrl = $this->urlBuilder->getUrl('*/*/configure/', $params);
+        $refererUrl = $this->redirect->getRefererUrl();
+
         $noticeMessages = $this->messageManager->getMessages()->getItemsByType(MessageInterface::TYPE_NOTICE);
         if (count($noticeMessages)) {
-            //@TODO Add logic for ajax
-            if ($subject->getRequest()->isAjax()) {
-                return $result;
-            }
-
-            return $resultRedirect->setUrl($url);
+            $redirectUrl = $configureUrl;
+            return $resultRedirect->setUrl($redirectUrl);
+        } elseif ($refererUrl && $refererUrl != $configureUrl) {
+            $redirectUrl = $refererUrl;
         }
 
-        return $result;
+        if ($this->cartHelper->getShouldRedirectToCart()) {
+            $redirectUrl = $this->cartHelper->getCartUrl();
+        }
+
+        if ($subject->getRequest()->isAjax()) {
+            /** @var Json $resultJson */
+            $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+            $resultJson->setData(['backUrl' => $redirectUrl]);
+            return $resultJson;
+        }
+
+        $resultRedirect->setUrl($redirectUrl);
+        return $resultRedirect;
     }
 }

@@ -67,17 +67,9 @@ class Wishlist
         }
 
         $multipleWishlistId = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
-        $idToQtyMapper = $this->getMultipleWishlistItemIdToQtyMapper($multipleWishlistId);
+        $ids = $this->getMultipleWishlistItemIds($multipleWishlistId);
 
-        $result->addFieldToFilter('wishlist_item_id', ['in' => array_keys($idToQtyMapper)]);
-
-        foreach ($result as $wishlistItem) {
-            if (isset($idToQtyMapper[$wishlistItem->getId()])) {
-                $wishlistItem->setQty($idToQtyMapper[$wishlistItem->getId()]['qty']);
-                $wishlistItem->setDescription($idToQtyMapper[$wishlistItem->getId()]['desc']);
-            }
-        }
-
+        $result->addFieldToFilter('wishlist_item_id', ['in' => $ids]);
         return $result;
     }
 
@@ -87,7 +79,7 @@ class Wishlist
      * @param int|null $multipleWishlistId
      * @return array
      */
-    protected function getMultipleWishlistItemIdToQtyMapper($multipleWishlistId)
+    protected function getMultipleWishlistItemIds($multipleWishlistId)
     {
         $itemList = $this->moduleHelper->getMultipleWishlistItems($multipleWishlistId);
 
@@ -110,8 +102,7 @@ class Wishlist
 
         $ids = [];
         foreach ($itemList as $item) {
-            $ids[$item->getWishlistItemId()]['qty'] = $item->getQty();
-            $ids[$item->getWishlistItemId()]['desc'] = $item->getDescription();
+            $ids[] = $item->getWishlistItemId();
         }
 
         return $ids;

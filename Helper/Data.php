@@ -159,9 +159,7 @@ class Data extends AbstractHelper
             );
         }
 
-        $itemList = $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
-
-        return $this->makeUniqueCollection($itemList);
+        return $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
     }
 
     /**
@@ -182,83 +180,5 @@ class Data extends AbstractHelper
         )->getItems();
 
         return array_shift($multipleWishlistList);
-    }
-
-    /**
-     * Recalculate qty for main wishlist item
-     * @param int $itemId
-     * @return void
-     */
-    public function recalculate($itemId)
-    {
-        $mainItemModel = $this->mainItemFactory->create();
-        $this->mainItemResource->load($mainItemModel, $itemId);
-        $items = $this->getMultipleWishlistItems(false, $itemId);
-
-        if (!count($items)) {
-            try {
-                $this->mainItemResource->delete($mainItemModel);
-            } catch (Exception $e) {
-                $this->logger->error($e->getMessage());
-            }
-        }
-
-        $qty = 0;
-        foreach ($items as $item) {
-            $qty += $item->getQty();
-        }
-
-        if ($mainItemModel->getId()) {
-            $mainItemModel->setQty($qty);
-            try {
-                $this->mainItemResource->save($mainItemModel);
-            } catch (AlreadyExistsException $e) {
-                $this->logger->error($e->getMessage());
-            } catch (Exception $e) {
-                $this->logger->error($e->getMessage());
-            }
-        }
-    }
-
-    /**
-     * Makes unique multiple wishlist item collection if there are duplicates
-     *
-     * @param $collection
-     * @return array
-     */
-    public function makeUniqueCollection($collection)
-    {
-        $items = [];
-        /** @var MultipleWishlistItemInterface $multipleWishlistItem */
-        foreach ($collection as $multipleWishlistItem) {
-            $multipleWishlist = $multipleWishlistItem->getMultipleWishlistId() ?: '0';
-            $key = $multipleWishlistItem->getWishlistItemId() . $multipleWishlist;
-
-            if (!in_array($key, array_keys($items))) {
-                $items[$key] = $multipleWishlistItem;
-            } else {
-                $existing = $items[$key];
-
-                try {
-                    $this->itemRepository->delete($multipleWishlistItem);
-                    $existing->setQty($existing->getQty() + $multipleWishlistItem->getQty());
-                    $items[$key] = $existing->setData('changed', true);
-                } catch (CouldNotDeleteException $e) {
-                    $this->logger->error($e->getMessage());
-                }
-            }
-        }
-
-        foreach ($items as $key => $item) {
-            if ($item->getData('changed')) {
-                try {
-                    $this->itemRepository->save($item);
-                } catch (CouldNotSaveException $e) {
-                    $this->logger->error($e->getMessage());
-                }
-            }
-        }
-
-        return array_values($items);
     }
 }

@@ -88,15 +88,12 @@ class AddProductToWishlistObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        //@TODO After add/remove/update recalculate main item qty
         //@TODO Check if checking isEnabled is used on every customization
-        //@TODO Add multiple wishlist param to the update wishlist button on product detail
         if (!$this->moduleHelper->isEnabled()) {
             return;
         }
 
         $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
-        $qty = $this->request->getParam('qty') ?: 1;
         $items = $observer->getEvent()->getItems();
 
         foreach ($items as $item) {
@@ -107,18 +104,9 @@ class AddProductToWishlistObserver implements ObserverInterface
             $itemId = $item->getId();
             $existingItem = $this->getExistingItem($itemId, $multipleWishlist);
 
-            if ($existingItem) {
-                try {
-                    $existingItem->setQty($existingItem->getQty() + $qty);
-                    $this->itemRepository->save($existingItem);
-                } catch (CouldNotSaveException $e) {
-                    $this->logger->error($e->getMessage());
-                }
-            } else {
-                $this->processNewItemCreation($itemId, $multipleWishlist, $qty);
+            if (!$existingItem) {
+                $this->processNewItemCreation($itemId, $multipleWishlist);
             }
-
-            $this->moduleHelper->recalculate($itemId);
         }
     }
 
@@ -127,14 +115,12 @@ class AddProductToWishlistObserver implements ObserverInterface
      *
      * @param int $itemId
      * @param int|null $multipleWishlistId
-     * @param float $qty
      * @return void
      */
-    protected function processNewItemCreation(int $itemId, $multipleWishlistId, float $qty)
+    protected function processNewItemCreation(int $itemId, $multipleWishlistId)
     {
         $multipleWishlistItem = $this->itemFactory->create();
         $multipleWishlistItem->setWishlistItemId($itemId);
-        $multipleWishlistItem->setQty($qty);
 
         if ($multipleWishlistId) {
             $multipleWishlistItem->setMultipleWishlistId($multipleWishlistId);

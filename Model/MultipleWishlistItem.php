@@ -85,38 +85,6 @@ class MultipleWishlistItem extends AbstractExtensibleModel implements IdentityIn
     /**
      * @inheritDoc
      */
-    public function getQty()
-    {
-        return $this->getData(self::MULTIPLE_WISHLIST_ITEM_QTY);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setQty(float $qty)
-    {
-        return $this->setData(self::MULTIPLE_WISHLIST_ITEM_QTY, $qty);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDescription()
-    {
-        return $this->getData(self::MULTIPLE_WISHLIST_ITEM_DESCRIPTION);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setDescription($description)
-    {
-        return $this->setData(self::MULTIPLE_WISHLIST_ITEM_DESCRIPTION, $description);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getExtensionAttributes()
     {
         return $this->_getExtensionAttributes();

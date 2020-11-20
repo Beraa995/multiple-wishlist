@@ -93,10 +93,6 @@ class Send
         }
 
         $wishlist = $this->wishlistProvider->getWishlist();
-        if (!$wishlist) {
-            return $result;
-        }
-
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         $params = [
