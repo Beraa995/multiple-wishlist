@@ -85,6 +85,22 @@ class MultipleWishlist extends AbstractExtensibleModel implements MultipleWishli
     /**
      * @inheritDoc
      */
+    public function getSharingCode()
+    {
+        return $this->getData(self::MULTIPLE_WISHLIST_SHARING_CODE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSharingCode(string $code)
+    {
+        return $this->setData(self::MULTIPLE_WISHLIST_SHARING_CODE, $code);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getExtensionAttributes()
     {
         return $this->_getExtensionAttributes();

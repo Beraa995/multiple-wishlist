@@ -88,7 +88,7 @@ class AddProductToWishlistObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        //@TODO Check if checking isEnabled is used on every customization
+        //@TODO Redirect to the right wishlist
         if (!$this->moduleHelper->isEnabled()) {
             return;
         }

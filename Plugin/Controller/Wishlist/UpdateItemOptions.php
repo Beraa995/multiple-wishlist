@@ -15,13 +15,13 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Wishlist\Controller\Index\Send as MagentoWishlistController;
+use Magento\Wishlist\Controller\Index\UpdateItemOptions as MagentoWishlistController;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 
 /**
  * Plugin class for redirecting to the shared wishlist after share
  */
-class Send
+class UpdateItemOptions
 {
     /**
      * @var RequestInterface
@@ -80,7 +80,7 @@ class Send
     }
 
     /**
-     * Redirect to the right wishlist after share
+     * Redirect to the right wishlist after configure
      *
      * @param MagentoWishlistController $subject
      * @param Redirect $result
@@ -88,7 +88,6 @@ class Send
      */
     public function afterExecute(MagentoWishlistController $subject, $result)
     {
-        //@TODO Check Rss
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

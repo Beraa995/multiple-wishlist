@@ -37,6 +37,14 @@ interface MultipleWishlistRepositoryInterface
     public function get(int $multipleWishlistId);
 
     /**
+     * Load multiple wishlist by sharing code
+     * @param string $code
+     * @throws NoSuchEntityException
+     * @return MultipleWishlist
+     */
+    public function getByCode(string $code);
+
+    /**
      * Load multiple wishlist data collection by given search criteria
      * @param SearchCriteriaInterface $criteria
      * @return MultipleWishlistSearchResultsInterface

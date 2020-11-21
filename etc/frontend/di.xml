@@ -28,8 +28,16 @@
         <plugin name="add_param_to_redirect_url_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Cart" />
     </type>
 
+    <type name="Magento\Wishlist\Controller\Shared\WishlistProvider">
+        <plugin name="load_shared_multiple_wishlist_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Shared\WishlistProvider" />
+    </type>
+
     <type name="Magento\Wishlist\Controller\Index\Send">
-        <plugin name="wishlist_share_redirect_after_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Send" />
+        <plugin name="wishlist_share_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Send" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\UpdateItemOptions">
+        <plugin name="wishlist_configure_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\UpdateItemOptions" />
     </type>
 
     <type name="Magento\Wishlist\Block\Customer\Wishlist">
@@ -46,6 +54,10 @@
 
     <type name="Magento\Wishlist\Model\Wishlist">
         <plugin name="filter_wishlist_collection_plugin" type="BKozlic\MultipleWishlist\Plugin\Model\Wishlist" />
+    </type>
+
+    <type name="Magento\Wishlist\Model\ResourceModel\Wishlist">
+        <plugin name="after_wishlist_save_plugin" type="BKozlic\MultipleWishlist\Plugin\Model\ResourceModel\Wishlist" />
     </type>
 
     <type name="Magento\Wishlist\Helper\Data">

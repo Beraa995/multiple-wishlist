@@ -13,6 +13,7 @@
                 comment="Multiple Wishlist ID" />
         <column xsi:type="int" name="wishlist_id" padding="10" unsigned="true" nullable="false" comment="Wishlist ID" />
         <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Multiple Wishlist Name" />
+        <column xsi:type="varchar" name="sharing_code" nullable="true" length="32" comment="Sharing code"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="multiple_wishlist_id" />
         </constraint>

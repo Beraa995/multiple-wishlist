@@ -8,9 +8,7 @@
 namespace BKozlic\MultipleWishlist\Plugin\Model;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
-use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection;
@@ -54,6 +52,31 @@ class Wishlist
     }
 
     /**
+     * Change sharing key based on multiple wishlist
+     *
+     * @param MagentoWishlistModel $subject
+     * @param MagentoWishlistModel $result
+     * @return MagentoWishlistModel
+     */
+    public function afterLoadByCustomerId(MagentoWishlistModel $subject, MagentoWishlistModel $result)
+    {
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
+        $multipleWishlist = $this->moduleHelper->getMultipleWishlist(
+            $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME)
+        );
+
+        if ($multipleWishlist && $multipleWishlist->getId()) {
+            $result->setTempSharingCode($result->getSharingCode());
+            $result->setSharingCode($multipleWishlist->getSharingCode());
+        }
+
+        return $result;
+    }
+
+    /**
      * Process filtering collection by custom multiple wishlist id
      *
      * @param MagentoWishlistModel $subject
@@ -87,7 +110,7 @@ class Wishlist
          * If there are no items in the default wishlist, than the items
          * from the first wishlist will be returned. This is because
          * wishlist switcher is not showing empty default wishlist.
-         * The sort must not be applied in the multiple wishlist switcher.
+         * The sort must not be applied in the multiple wishlist switcher!
          */
         if (!$multipleWishlistId && !count($itemList)) {
             $wishlist = $this->wishlistProvider->getWishlist()->getId();

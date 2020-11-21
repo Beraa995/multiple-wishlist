@@ -120,6 +120,28 @@ class MultipleWishlistRepository implements MultipleWishlistRepositoryInterface
     }
 
     /**
+     * Load multiple wishlist by sharing code
+     *
+     * @param string $code
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
+     * @return MultipleWishlist
+     */
+    public function getByCode(string $code)
+    {
+        $multipleWishlist = $this->multipleWishlistFactory->create();
+        $this->resource->load($multipleWishlist, $code, MultipleWishlistInterface::MULTIPLE_WISHLIST_SHARING_CODE);
+
+        if (!$multipleWishlist->getId()) {
+            throw new NoSuchEntityException(
+                __('The multiple wishlist record with the "%1" code doesn\'t exist.', $code)
+            );
+        }
+
+        return $multipleWishlist;
+    }
+
+    /**
      * Load multiple wishlist data collection by given search criteria
      *
      * @param SearchCriteriaInterface $criteria

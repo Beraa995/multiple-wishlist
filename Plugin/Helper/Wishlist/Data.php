@@ -69,7 +69,7 @@ class Data
      */
     public function afterGetAddToCartParams(WishlistHelper $subject, $result, $item, $addReferer = false)
     {
-        //@TODO Check sharedAddAllToCart from the helper
+        //@TODO Check another wishlist controllers
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }
@@ -88,6 +88,10 @@ class Data
      */
     public function afterGetListUrl(WishlistHelper $subject, $result, $wishlistId = null)
     {
+        if (!$this->moduleHelper->isEnabled()) {
+            return $result;
+        }
+
         $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
         if (!$multipleWishlist) {
             return $result;

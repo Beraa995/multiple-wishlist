@@ -142,7 +142,7 @@ class Update
     {
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $mainExecute = $proceed();
-        //@TODO Wishlist shared/index contains wrong items.
+
         if (!$this->moduleHelper->isEnabled()) {
             return $mainExecute;
         }

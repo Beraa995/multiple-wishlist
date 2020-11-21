@@ -15,7 +15,10 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Math\Random;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 use Psr\Log\LoggerInterface;
 
@@ -45,114 +48,123 @@ class Create extends Action implements HttpPostActionInterface
     protected $logger;
 
     /**
+     * @var Random
+     */
+    protected $mathRandom;
+
+    /**
+     * @var Validator
+     */
+    protected $formKeyValidator;
+
+    /**
      * Create constructor.
      * @param Context $context
      * @param MultipleWishlistFactory $multipleWishlistFactory
      * @param MultipleWishlistRepository $multipleWishlistRepository
      * @param WishlistHelper $wishlistHelper
      * @param LoggerInterface $logger
+     * @param Random $mathRandom
+     * @param Validator $formKeyValidator
      */
     public function __construct(
         Context $context,
         MultipleWishlistFactory $multipleWishlistFactory,
         MultipleWishlistRepository $multipleWishlistRepository,
         WishlistHelper $wishlistHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Random $mathRandom,
+        Validator $formKeyValidator
     ) {
         parent::__construct($context);
         $this->multipleWishlistFactory = $multipleWishlistFactory;
         $this->multipleWishlistRepository = $multipleWishlistRepository;
         $this->wishlistHelper = $wishlistHelper;
         $this->logger = $logger;
+        $this->mathRandom = $mathRandom;
+        $this->formKeyValidator = $formKeyValidator;
     }
 
     /**
      * Process multiple wishlist creation
+     *
+     * @throws LocalizedException
+     * @return Json|Redirect
      */
     public function execute()
     {
         //@TODO Limit number of wishlists with system configuration
         //@TODO Add form key and validate here and in Delete controller
+        //@TODO Move item to another wishlist functionality
         $params = $this->getRequest()->getParams();
         $wishlistId = $this->wishlistHelper->getWishlist()->getId();
-        if ($this->getRequest()->isAjax()) {
-            return $this->processAjax($params, $wishlistId);
+
+        if (!$this->formKeyValidator->validate($this->getRequest())) {
+            return $this->processReturn(
+                __('Invalid Form Key. Please refresh the page.'),
+                false
+            );
         }
 
-        return $this->processRequest($params, $wishlistId);
-    }
-
-    /**
-     * Process ajax request
-     * @param array $params
-     * @param int $wishlistId
-     * @return Json
-     */
-    protected function processAjax(array $params, int $wishlistId)
-    {
-        /** @var Json $resultJson */
-        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         if (!$wishlistId || !isset($params['name']) || !trim($params['name'])) {
-            $resultJson->setData(
-                [
-                    'success' => false,
-                    'message' => __('Required data missing.')
-                ]
+            return $this->processReturn(
+                __('Required data missing.'),
+                false
             );
-            return $resultJson;
         }
 
         $create = $this->createWishlist($params, $wishlistId);
-
         if (!$create) {
-            $resultJson->setData(
-                [
-                    'success' => false,
-                    'message' => __('Something went wrong while saving the wishlist.')
-                ]
+            return $this->processReturn(
+                __('Something went wrong while saving the wishlist.'),
+                false
             );
-            return $resultJson;
         }
 
-        $resultJson->setData(
-            [
-                'success' => true,
-                'message' => __('Wishlist has been successfully saved.')
-            ]
+        return $this->processReturn(
+            __('Wishlist has been successfully saved.')
         );
-        return $resultJson;
     }
 
     /**
      * Process request
-     * @param array $params
-     * @param int $wishlistId
-     * @return Redirect
+     *
+     * @param $message
+     * @param bool $success
+     * @return Json|Redirect
      */
-    protected function processRequest(array $params, int $wishlistId)
+    protected function processReturn($message, $success = true)
     {
-        /** @var Redirect $resultRedirect */
+        /**
+         * @var Json $resultJson
+         * @var Redirect $resultRedirect
+         */
+        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-
-        if (!$wishlistId || !isset($params['name']) || !trim($params['name'])) {
-            $this->messageManager->addErrorMessage(__('Required data missing.'));
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+        if ($this->getRequest()->isAjax()) {
+            $resultJson->setData(
+                [
+                    'success' => $success,
+                    'message' => $message
+                ]
+            );
+            return $resultJson;
         }
 
-        $create = $this->createWishlist($params, $wishlistId);
-
-        if (!$create) {
-            $this->messageManager->addErrorMessage(__('Something went wrong while saving the wishlist.'));
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+        if (!$success) {
+            $this->messageManager->addErrorMessage($message);
+        } else {
+            $this->messageManager->addSuccessMessage($message);
         }
 
-        $this->messageManager->addSuccessMessage(__('Wishlist has been successfully saved.'));
+        return $resultRedirect->setPath($this->_redirect->getRefererUrl());
     }
 
     /**
      * Creates a multiple wishlist
      * @param array $params
      * @param int $wishlistId
+     * @throws LocalizedException
      * @return bool
      */
     protected function createWishlist(array $params, int $wishlistId)
@@ -160,6 +172,7 @@ class Create extends Action implements HttpPostActionInterface
         $multipleWishlist = $this->multipleWishlistFactory->create();
         $multipleWishlist->setWishlistId($wishlistId);
         $multipleWishlist->setName($params['name']);
+        $multipleWishlist->setSharingCode($this->mathRandom->getUniqueHash());
 
         try {
             $this->multipleWishlistRepository->save($multipleWishlist);

@@ -18,6 +18,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\ResourceModel\Item;
@@ -180,5 +181,26 @@ class Data extends AbstractHelper
         )->getItems();
 
         return array_shift($multipleWishlistList);
+    }
+
+    /**
+     * Returns multiple wishlist for a given id
+     *
+     * @param int $wishlistId
+     * @return MultipleWishlistInterface
+     */
+    public function getMultipleWishlist($wishlistId)
+    {
+        $multipleWishlist = null;
+
+        if ($wishlistId) {
+            try {
+                $multipleWishlist = $this->multipleWishlistRepository->get($wishlistId);
+            } catch (NoSuchEntityException $e) {
+                $this->logger->error($e->getMessage());
+            }
+        }
+
+        return $multipleWishlist;
     }
 }

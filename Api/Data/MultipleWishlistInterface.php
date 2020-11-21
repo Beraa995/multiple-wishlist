@@ -19,6 +19,7 @@ interface MultipleWishlistInterface extends ExtensibleDataInterface
     const MULTIPLE_WISHLIST_ID = 'multiple_wishlist_id';
     const WISHLIST_ID = 'wishlist_id';
     const MULTIPLE_WISHLIST_NAME = 'name';
+    const MULTIPLE_WISHLIST_SHARING_CODE = 'sharing_code';
 
     /**
      * Returns multiple wishlist id
@@ -64,6 +65,21 @@ interface MultipleWishlistInterface extends ExtensibleDataInterface
      * @return MultipleWishlistInterface
      */
     public function setName(string $name);
+
+    /**
+     * Returns multiple sharing code
+     *
+     * @return string
+     */
+    public function getSharingCode();
+
+    /**
+     * Set multiple wishlist sharing code
+     *
+     * @param string $code
+     * @return MultipleWishlistInterface
+     */
+    public function setSharingCode(string $code);
 
     /**
      * Retrieve existing extension attributes object or create a new one.
