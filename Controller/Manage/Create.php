@@ -7,14 +7,13 @@
  */
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
+use BKozlic\MultipleWishlist\Controller\AbstractManage;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistFactory;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\Json;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
@@ -25,7 +24,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Controller for multiple wishlist creation
  */
-class Create extends Action implements HttpPostActionInterface
+class Create extends AbstractManage implements HttpPostActionInterface
 {
     /**
      * @var MultipleWishlistFactory
@@ -94,7 +93,6 @@ class Create extends Action implements HttpPostActionInterface
     public function execute()
     {
         //@TODO Limit number of wishlists with system configuration
-        //@TODO Add form key and validate here and in Delete controller
         //@TODO Move item to another wishlist functionality
         $params = $this->getRequest()->getParams();
         $wishlistId = $this->wishlistHelper->getWishlist()->getId();
@@ -124,40 +122,6 @@ class Create extends Action implements HttpPostActionInterface
         return $this->processReturn(
             __('Wishlist has been successfully saved.')
         );
-    }
-
-    /**
-     * Process request
-     *
-     * @param $message
-     * @param bool $success
-     * @return Json|Redirect
-     */
-    protected function processReturn($message, $success = true)
-    {
-        /**
-         * @var Json $resultJson
-         * @var Redirect $resultRedirect
-         */
-        $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        if ($this->getRequest()->isAjax()) {
-            $resultJson->setData(
-                [
-                    'success' => $success,
-                    'message' => $message
-                ]
-            );
-            return $resultJson;
-        }
-
-        if (!$success) {
-            $this->messageManager->addErrorMessage($message);
-        } else {
-            $this->messageManager->addSuccessMessage($message);
-        }
-
-        return $resultRedirect->setPath($this->_redirect->getRefererUrl());
     }
 
     /**

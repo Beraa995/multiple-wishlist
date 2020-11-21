@@ -7,12 +7,10 @@
  */
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
+use BKozlic\MultipleWishlist\Controller\AbstractManage;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\Controller\Result\Redirect;
-use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\LocalizedException;
@@ -21,7 +19,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 /**
  * Controller for multiple wishlist deletion
  */
-class Delete extends Action implements HttpPostActionInterface
+class Delete extends AbstractManage implements HttpPostActionInterface
 {
     /**
      * @var Validator
@@ -55,31 +53,45 @@ class Delete extends Action implements HttpPostActionInterface
      */
     public function execute()
     {
-        //@TODO Check ajax request
         //@TODO Move items to another wishlist
-        /** @var Redirect $resultRedirect */
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $params = $this->getRequest()->getParams();
 
+        if (!$this->formKeyValidator->validate($this->getRequest())) {
+            return $this->processReturn(
+                __('Invalid Form Key. Please refresh the page.'),
+                false
+            );
+        }
+
         if (!isset($params['id'])) {
-            $this->messageManager->addErrorMessage(__('Required data missing!'));
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+            return $this->processReturn(
+                __('Required data missing!'),
+                false
+            );
         }
 
         try {
             $this->multipleWishlistRepository->deleteById($params['id']);
         } catch (CouldNotDeleteException $e) {
-            $this->messageManager->addErrorMessage(__('Something went wrong while removing the wishlist!'));
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+            return $this->processReturn(
+                __('Something went wrong while removing the wishlist.'),
+                false
+            );
         } catch (NoSuchEntityException $e) {
-            $this->messageManager->addErrorMessage(__('Wishlist doesn\'t exist!'));
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+            return $this->processReturn(
+                __('Wishlist doesn\'t exist.'),
+                false
+            );
         } catch (LocalizedException $e) {
-            $this->messageManager->addErrorMessage(__('Something went wrong!'));
-            return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+            return $this->processReturn(
+                __('Something went wrong.'),
+                false
+            );
         }
 
-        $this->messageManager->addSuccessMessage(__('Wishlist has been successfully removed!'));
-        return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        return $this->processReturn(
+            __('Wishlist has been successfully removed.'),
+            true
+        );
     }
 }

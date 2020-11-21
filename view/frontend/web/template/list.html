@@ -24,7 +24,7 @@
         <input type="text" name="muttiple_wishlist_name" data-bind="value: wishlistNameValue, css: { 'mage-error': createError }">
         <!-- ko if: createError -->
             <div generated="true" class="mage-error">
-                <!-- ko i18n: 'This is a required field.' --><!-- /ko -->
+                <span data-bind="text: errorText"></span>
             </div>
         <!-- /ko -->
     </div>

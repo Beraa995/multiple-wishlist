@@ -10,7 +10,8 @@ define([
     'jquery',
     'underscore',
     'ko',
-    'mage/translate'
+    'mage/translate',
+    'mage/cookies'
 ], function (Component, customerData, $, _, ko, $t) {
     'use strict';
 
@@ -20,11 +21,14 @@ define([
         createError: ko.observable(false),
         createNewText: $t('Create New Wishlist'),
         creatingText: $t('Creating'),
+        requiredFieldText: $t('This is a required field.'),
         createButtonText: ko.observable(),
+        errorText: ko.observable(),
 
         initialize: function () {
             this._super();
             this.createButtonText(this.createNewText);
+            this.errorText(this.requiredFieldText);
         },
 
         /**
@@ -55,24 +59,30 @@ define([
 
             if (!wishlistName.trim()) {
                 this.createError(true);
+                this.errorText(this.requiredFieldText);
             }
 
             if (createUrl && !this.ajaxProcess() && wishlistName.trim()) {
                 this.ajaxProcess(true);
-                //@TODO Check translations
                 this.createButtonText(this.creatingText);
                 $.post({
                     url: createUrl,
                     data: {
-                        name: wishlistName
+                        name: wishlistName,
+                        form_key: $.mage.cookies.get('form_key'),
                     },
                     success: function (data) {
-                        //@TODO Process success/error
+                        if (!data.success) {
+                            component.createError(true);
+                            component.errorText(data.message);
+                        } else {
+                            component.createError(false);
+                            component.wishlistNameValue('');
+                        }
+                        //@TODO Wishlist name limit
                     },
                     complete: function () {
-                        component.wishlistNameValue('');
                         component.ajaxProcess(false);
-                        component.createError(false);
                         component.createButtonText(component.createNewText);
                     }
                 });
