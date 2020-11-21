@@ -88,7 +88,6 @@ class AddProductToWishlistObserver implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        //@TODO Redirect to the right wishlist
         if (!$this->moduleHelper->isEnabled()) {
             return;
         }

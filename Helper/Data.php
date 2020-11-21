@@ -11,13 +11,9 @@ use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
-use Exception;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Framework\Exception\CouldNotDeleteException;
-use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Wishlist\Model\ItemFactory;
@@ -35,7 +31,7 @@ class Data extends AbstractHelper
     const XML_PATH_ENABLED = 'wishlist/multiple_wishlist_general/enabled';
     const XML_PATH_STRATEGY = 'wishlist/multiple_wishlist_general/wishlist_strategy';
     const XML_PATH_LIMIT = 'wishlist/multiple_wishlist_general/wishlist_limit';
-    const DEFAULT_LIMIT = 100;
+    const DEFAULT_LIMIT = 50;
     const MAX_LIMIT = 1000;
 
     /**
@@ -123,7 +119,6 @@ class Data extends AbstractHelper
      */
     public function getWishlistLimit()
     {
-        //@TODO Check if value is string, float, empty, negative.
         $limit = $this->scopeConfig->getValue(self::XML_PATH_LIMIT, ScopeInterface::SCOPE_STORE);
         if (!is_numeric($limit) || $limit < 0) {
             return self::DEFAULT_LIMIT;

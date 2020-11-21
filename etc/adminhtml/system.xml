@@ -27,8 +27,8 @@
 
                 <field id="wishlist_limit" translate="label" type="text" sortOrder="30"
                        showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Add To Wishlist Strategy</label>
-                    <comment>Max: 1000. Default limit: 100</comment>
+                    <label>Max. Number of Wishlists per Customer</label>
+                    <comment>Max: 1000. Default limit: 50</comment>
                 </field>
             </group>
         </section>

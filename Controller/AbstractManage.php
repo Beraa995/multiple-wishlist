@@ -12,6 +12,9 @@ use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\ResultFactory;
 
+/**
+ * Abstract class for multiple wishlist manage controllers
+ */
 abstract class AbstractManage extends Action
 {
     /**

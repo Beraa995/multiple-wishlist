@@ -7,9 +7,12 @@
  */
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Controller\AbstractManage;
+use BKozlic\MultipleWishlist\Helper\Data;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistFactory;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
@@ -57,7 +60,18 @@ class Create extends AbstractManage implements HttpPostActionInterface
     protected $formKeyValidator;
 
     /**
+     * @var SearchCriteriaBuilder
+     */
+    protected $searchCriteriaBuilder;
+
+    /**
+     * @var Data
+     */
+    protected $moduleHelper;
+
+    /**
      * Create constructor.
+     *
      * @param Context $context
      * @param MultipleWishlistFactory $multipleWishlistFactory
      * @param MultipleWishlistRepository $multipleWishlistRepository
@@ -65,6 +79,8 @@ class Create extends AbstractManage implements HttpPostActionInterface
      * @param LoggerInterface $logger
      * @param Random $mathRandom
      * @param Validator $formKeyValidator
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param Data $moduleHelper
      */
     public function __construct(
         Context $context,
@@ -73,7 +89,9 @@ class Create extends AbstractManage implements HttpPostActionInterface
         WishlistHelper $wishlistHelper,
         LoggerInterface $logger,
         Random $mathRandom,
-        Validator $formKeyValidator
+        Validator $formKeyValidator,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        Data $moduleHelper
     ) {
         parent::__construct($context);
         $this->multipleWishlistFactory = $multipleWishlistFactory;
@@ -82,6 +100,8 @@ class Create extends AbstractManage implements HttpPostActionInterface
         $this->logger = $logger;
         $this->mathRandom = $mathRandom;
         $this->formKeyValidator = $formKeyValidator;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->moduleHelper = $moduleHelper;
     }
 
     /**
@@ -92,7 +112,6 @@ class Create extends AbstractManage implements HttpPostActionInterface
      */
     public function execute()
     {
-        //@TODO Limit number of wishlists with system configuration
         //@TODO Move item to another wishlist functionality
         $params = $this->getRequest()->getParams();
         $wishlistId = $this->wishlistHelper->getWishlist()->getId();
@@ -111,6 +130,14 @@ class Create extends AbstractManage implements HttpPostActionInterface
             );
         }
 
+        $wishlistExceeded = $this->checkLimit($wishlistId);
+        if ($wishlistExceeded) {
+            return $this->processReturn(
+                __('You have reached maximum amount of the wishlists.'),
+                false
+            );
+        }
+
         $create = $this->createWishlist($params, $wishlistId);
         if (!$create) {
             return $this->processReturn(
@@ -125,7 +152,32 @@ class Create extends AbstractManage implements HttpPostActionInterface
     }
 
     /**
+     * Checks if multiple wishlist limit number is exceeded
+     *
+     * @param int $wishlistId
+     * @return bool
+     */
+    protected function checkLimit($wishlistId)
+    {
+        $this->searchCriteriaBuilder->addFilter(
+            MultipleWishlistInterface::WISHLIST_ID,
+            $wishlistId
+        );
+
+        $limit = $this->moduleHelper->getWishlistLimit();
+        $multipleWishlists = $this->multipleWishlistRepository->getList($this->searchCriteriaBuilder->create())
+            ->getItems();
+
+        if ($limit <= count($multipleWishlists)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Creates a multiple wishlist
+     *
      * @param array $params
      * @param int $wishlistId
      * @throws LocalizedException

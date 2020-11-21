@@ -33,11 +33,15 @@
     </type>
 
     <type name="Magento\Wishlist\Controller\Index\Send">
-        <plugin name="wishlist_share_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Send" />
+        <plugin name="wishlist_share_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\AddSendUpdateOptions" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Add">
+        <plugin name="wishlist_add_item_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\AddSendUpdateOptions" />
     </type>
 
     <type name="Magento\Wishlist\Controller\Index\UpdateItemOptions">
-        <plugin name="wishlist_configure_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\UpdateItemOptions" />
+        <plugin name="wishlist_configure_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\AddSendUpdateOptions" />
     </type>
 
     <type name="Magento\Wishlist\Block\Customer\Wishlist">

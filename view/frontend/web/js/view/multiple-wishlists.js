@@ -79,7 +79,6 @@ define([
                             component.createError(false);
                             component.wishlistNameValue('');
                         }
-                        //@TODO Wishlist name limit
                     },
                     complete: function () {
                         component.ajaxProcess(false);
