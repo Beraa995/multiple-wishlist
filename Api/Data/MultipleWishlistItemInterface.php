@@ -18,6 +18,7 @@ interface MultipleWishlistItemInterface extends ExtensibleDataInterface
     const PRIMARY_ID = 'item_id';
     const MULTIPLE_WISHLIST_ID = 'multiple_wishlist_id';
     const MULTIPLE_WISHLIST_ITEM = 'wishlist_item_id';
+    const WISHLIST_ID = 'wishlist_id';
 
     /**
      * Returns multiple wishlist item id
@@ -33,6 +34,21 @@ interface MultipleWishlistItemInterface extends ExtensibleDataInterface
      * @return MultipleWishlistItemInterface
      */
     public function setId($id);
+
+    /**
+     * Returns main wishlist id
+     *
+     * @return int
+     */
+    public function getWishlistId();
+
+    /**
+     * Set main wishlist id
+     *
+     * @param int $id
+     * @return MultipleWishlistInterface
+     */
+    public function setWishlistId(int $id);
 
     /**
      * Returns multiple wishlist id

@@ -26,7 +26,7 @@ define([
                         text: $t('Close')
                     },
                     {
-                        text: $t('Add Item To Selected Wishlist'),
+                        text: $t('Add Item to the Wishlist'),
                         class: 'action primary',
                         click: function () {
                             $(this.options.form).submit();

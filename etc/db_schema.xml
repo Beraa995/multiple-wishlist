@@ -26,6 +26,7 @@
         <column xsi:type="int" name="item_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Multiple Wishlist Item ID" />
         <column xsi:type="int" name="multiple_wishlist_id" padding="10" unsigned="true" nullable="true" comment="Multiple Wishlist ID" />
+        <column xsi:type="int" name="wishlist_id" padding="10" unsigned="true" nullable="true" comment="Wishlist ID" />
         <column xsi:type="int" name="wishlist_item_id" padding="10" unsigned="true" nullable="false" comment="Wishlist item ID" />
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="item_id" />

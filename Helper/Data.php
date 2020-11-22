@@ -16,6 +16,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Wishlist\Helper\Data as WishlistHelper;
 use Magento\Wishlist\Model\ItemFactory;
 use Magento\Wishlist\Model\ResourceModel\Item;
 use Psr\Log\LoggerInterface;
@@ -65,6 +66,11 @@ class Data extends AbstractHelper
     protected $multipleWishlistRepository;
 
     /**
+     * @var WishlistHelper
+     */
+    protected $wishlistHelper;
+
+    /**
      * Data constructor.
      * @param Context $context
      * @param MultipleWishlistItemRepositoryInterface $itemRepository
@@ -73,6 +79,7 @@ class Data extends AbstractHelper
      * @param ItemFactory $mainItemFactory
      * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param LoggerInterface $logger
+     * @param WishlistHelper $wishlistHelper
      */
     public function __construct(
         Context $context,
@@ -81,7 +88,8 @@ class Data extends AbstractHelper
         Item $mainItemResource,
         ItemFactory $mainItemFactory,
         MultipleWishlistRepositoryInterface $multipleWishlistRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        WishlistHelper $wishlistHelper
     ) {
         parent::__construct($context);
         $this->itemRepository = $itemRepository;
@@ -90,6 +98,7 @@ class Data extends AbstractHelper
         $this->mainItemResource = $mainItemResource;
         $this->mainItemFactory = $mainItemFactory;
         $this->multipleWishlistRepository = $multipleWishlistRepository;
+        $this->wishlistHelper = $wishlistHelper;
     }
 
     /**
@@ -142,6 +151,11 @@ class Data extends AbstractHelper
     {
         if ($wishlist !== false) {
             $this->searchCriteriaBuilder->addFilter(
+                MultipleWishlistItemInterface::WISHLIST_ID,
+                $this->wishlistHelper->getWishlist()->getId()
+            );
+
+            $this->searchCriteriaBuilder->addFilter(
                 MultipleWishlistItemInterface::MULTIPLE_WISHLIST_ID,
                 $wishlist,
                 $wishlist ? 'eq' : 'null'
@@ -156,6 +170,17 @@ class Data extends AbstractHelper
         }
 
         return $this->itemRepository->getList($this->searchCriteriaBuilder->create())->getItems();
+    }
+
+    /**
+     * Returns number of items in the current wishlist
+     *
+     * @param $multipleWishlistId
+     * @return int
+     */
+    public function countMultipleWishlistItems($multipleWishlistId)
+    {
+        return count($this->getMultipleWishlistItems($multipleWishlistId));
     }
 
     /**

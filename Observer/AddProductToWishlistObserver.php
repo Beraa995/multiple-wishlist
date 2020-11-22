@@ -101,10 +101,11 @@ class AddProductToWishlistObserver implements ObserverInterface
             }
 
             $itemId = $item->getId();
+            $wishlistId = $item->getWishlistId();
             $existingItem = $this->getExistingItem($itemId, $multipleWishlist);
 
             if (!$existingItem) {
-                $this->processNewItemCreation($itemId, $multipleWishlist);
+                $this->processNewItemCreation($itemId, $wishlistId, $multipleWishlist);
             }
         }
     }
@@ -113,13 +114,15 @@ class AddProductToWishlistObserver implements ObserverInterface
      * Save new item for multiple wishlist
      *
      * @param int $itemId
+     * @param int $wishlistId
      * @param int|null $multipleWishlistId
      * @return void
      */
-    protected function processNewItemCreation(int $itemId, $multipleWishlistId)
+    protected function processNewItemCreation(int $itemId, int $wishlistId, $multipleWishlistId)
     {
         $multipleWishlistItem = $this->itemFactory->create();
         $multipleWishlistItem->setWishlistItemId($itemId);
+        $multipleWishlistItem->setWishlistId($wishlistId);
 
         if ($multipleWishlistId) {
             $multipleWishlistItem->setMultipleWishlistId($multipleWishlistId);

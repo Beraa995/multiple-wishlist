@@ -1,35 +1,40 @@
 <?php
 /**
- * @var \Magento\Framework\View\Element\Template $block
- * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
+ * @var \BKozlic\MultipleWishlist\Block\ListWishlist $block
  */
 
-$viewModel = $block->getViewModel();
-//@TODO Items in default wishlist are presented for every customer
+$collection = $block->getCollection();
 //@TODO Pagination here and in modal?
 ?>
-<table class="table data multiple-wishlist-table">
-    <caption class="table-caption"><?= $block->escapeHtml(__('Multiple Wishlists')); ?></caption>
-    <thead>
+<?php if (!$collection->count()): ?>
+    <div class="message info empty"><span><?= $block->escapeHtml(__('You have no created wishlists.')) ?></span></div>
+<?php else: ?>
+    <?php if ($count = $block->countItems(null)): ?>
+        <p>
+            <span><?= $block->escapeHtml(__('Number of products in the default wishlist:')); ?></span>
+            <strong><?= $count; ?></strong>
+        </p>
+    <?php endif; ?>
+
+    <div class="toolbar">
+        <?= $block->getChildHtml('multiple.wishlist.pager'); ?>
+    </div>
+
+    <table class="table data multiple-wishlist-table">
+        <caption class="table-caption"><?= $block->escapeHtml(__('Multiple Wishlists')); ?></caption>
+        <thead>
         <tr>
             <th class="col"><?= $block->escapeHtml(__('Name')); ?></th>
             <th class="col"><?= $block->escapeHtml(__('Number of Products')); ?></th>
             <th class="col"></th>
         </tr>
-    </thead>
-    <tbody>
-        <?php if ($count = $viewModel->countMultipleWishlistItems(null)): ?>
-            <tr>
-                <td class="col"><?= $block->escapeHtml(__('Default Wishlist')); ?></td>
-                <td class="col"><?= $count; ?></td>
-                <td class="col actions"></td>
-            </tr>
-        <?php endif; ?>
+        </thead>
+        <tbody>
 
-        <?php foreach ($viewModel->getList() as $multipleWishlist): ?>
+        <?php foreach ($collection as $multipleWishlist): ?>
             <tr>
                 <td class="col"><?= $block->escapeHtml($multipleWishlist->getName()); ?></td>
-                <td class="col"><?= $viewModel->countMultipleWishlistItems($multipleWishlist->getId()); ?></td>
+                <td class="col"><?= $block->countItems($multipleWishlist->getId()); ?></td>
                 <td class="col actions">
                     <a class="action edit" href="<?= $block->escapeUrl($block->getUrl('multiplewishlist/manage/edit', ['id' => $multipleWishlist->getId()])) ?>">
                         <span><?= $block->escapeHtml(__('Edit')) ?></span>
@@ -40,5 +45,6 @@ $viewModel = $block->getViewModel();
                 </td>
             </tr>
         <?php endforeach; ?>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+<?php endif; ?>

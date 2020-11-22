@@ -11,10 +11,8 @@
     <update handle="customer_account"/>
     <body>
         <referenceContainer name="content">
-            <block name="multiple.wishlist.list" template="BKozlic_MultipleWishlist::list.phtml" cacheable="false">
-                <arguments>
-                    <argument name="view_model" xsi:type="object">BKozlic\MultipleWishlist\ViewModel\MultipleWishlist</argument>
-                </arguments>
+            <block class="BKozlic\MultipleWishlist\Block\ListWishlist" name="multiple.wishlist.list" template="BKozlic_MultipleWishlist::list.phtml" cacheable="false">
+                <block class="Magento\Theme\Block\Html\Pager" name="multiple.wishlist.pager" />
             </block>
         </referenceContainer>
     </body>
