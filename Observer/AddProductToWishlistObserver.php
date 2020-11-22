@@ -120,6 +120,8 @@ class AddProductToWishlistObserver implements ObserverInterface
      */
     protected function processNewItemCreation(int $itemId, int $wishlistId, $multipleWishlistId)
     {
+        //@TODO If not redirect to wishlist show success message in modal?
+        //@TODO Prevent saving wishlist with the same name
         $multipleWishlistItem = $this->itemFactory->create();
         $multipleWishlistItem->setWishlistItemId($itemId);
         $multipleWishlistItem->setWishlistId($wishlistId);

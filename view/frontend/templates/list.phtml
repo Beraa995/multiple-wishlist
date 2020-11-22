@@ -36,10 +36,13 @@ $collection = $block->getCollection();
                 <td class="col"><?= $block->escapeHtml($multipleWishlist->getName()); ?></td>
                 <td class="col"><?= $block->countItems($multipleWishlist->getId()); ?></td>
                 <td class="col actions">
+                    <a class="action view" href="<?= $block->escapeUrl($block->getUrl('wishlist', ['multiple_wishlist' => $multipleWishlist->getId()])) ?>">
+                        <span><?= $block->escapeHtml(__('View')) ?></span>
+                    </a>
                     <a class="action edit" href="<?= $block->escapeUrl($block->getUrl('multiplewishlist/manage/edit', ['id' => $multipleWishlist->getId()])) ?>">
                         <span><?= $block->escapeHtml(__('Edit')) ?></span>
                     </a>
-                    <a class="action delete" href="#">
+                    <a class="action delete" data-post="<?= $block->escapeUrl($block->getRemoveUrl($multipleWishlist->getId())); ?>" href="#">
                         <span><?= $block->escapeHtml(__('Delete')) ?></span>
                     </a>
                 </td>
