@@ -16,6 +16,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Wishlist\Helper\Data as WishlistHelper;
 
 /**
  * Module's view model class
@@ -33,16 +34,24 @@ class MultipleWishlist implements ArgumentInterface
     protected $moduleHelper;
 
     /**
+     * @var WishlistHelper
+     */
+    protected $wishlistHelper;
+
+    /**
      * MultipleWishlist constructor.
      * @param Session $customerSession
      * @param Data $moduleHelper
+     * @param WishlistHelper $wishlistHelper
      */
     public function __construct(
         Session $customerSession,
-        Data $moduleHelper
+        Data $moduleHelper,
+        WishlistHelper $wishlistHelper
     ) {
         $this->customerSession = $customerSession;
         $this->moduleHelper = $moduleHelper;
+        $this->wishlistHelper = $wishlistHelper;
     }
 
     /**
@@ -64,5 +73,28 @@ class MultipleWishlist implements ArgumentInterface
     public function canShowModal()
     {
         return $this->moduleHelper->canShowModal();
+    }
+
+    /**
+     * Returns multiple wishlists
+     *
+     * @return MultipleWishlistInterface[]
+     */
+    public function getList()
+    {
+        return $this->moduleHelper->getAllMultipleWishlists(
+            $this->wishlistHelper->getWishlist()->getId()
+        );
+    }
+
+    /**
+     * Returns number of items in the current wishlist
+     *
+     * @param $multipleWishlistId
+     * @return int
+     */
+    public function countMultipleWishlistItems($multipleWishlistId)
+    {
+        return count($this->moduleHelper->getMultipleWishlistItems($multipleWishlistId));
     }
 }

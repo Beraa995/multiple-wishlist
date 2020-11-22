@@ -1,0 +1,44 @@
+<?php
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
+ */
+
+$viewModel = $block->getViewModel();
+//@TODO Items in default wishlist are presented for every customer
+//@TODO Pagination here and in modal?
+?>
+<table class="table data multiple-wishlist-table">
+    <caption class="table-caption"><?= $block->escapeHtml(__('Multiple Wishlists')); ?></caption>
+    <thead>
+        <tr>
+            <th class="col"><?= $block->escapeHtml(__('Name')); ?></th>
+            <th class="col"><?= $block->escapeHtml(__('Number of Products')); ?></th>
+            <th class="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if ($count = $viewModel->countMultipleWishlistItems(null)): ?>
+            <tr>
+                <td class="col"><?= $block->escapeHtml(__('Default Wishlist')); ?></td>
+                <td class="col"><?= $count; ?></td>
+                <td class="col actions"></td>
+            </tr>
+        <?php endif; ?>
+
+        <?php foreach ($viewModel->getList() as $multipleWishlist): ?>
+            <tr>
+                <td class="col"><?= $block->escapeHtml($multipleWishlist->getName()); ?></td>
+                <td class="col"><?= $viewModel->countMultipleWishlistItems($multipleWishlist->getId()); ?></td>
+                <td class="col actions">
+                    <a class="action edit" href="<?= $block->escapeUrl($block->getUrl('multiplewishlist/manage/edit', ['id' => $multipleWishlist->getId()])) ?>">
+                        <span><?= $block->escapeHtml(__('Edit')) ?></span>
+                    </a>
+                    <a class="action delete" href="#">
+                        <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

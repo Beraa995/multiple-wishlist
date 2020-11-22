@@ -95,9 +95,10 @@ class Index
         }
 
         if (!$multipleWishlistId) {
-            $firstWishlist = $this->moduleHelper->getFirstMultipleWishlist(
+            $wishlists = $this->moduleHelper->getAllMultipleWishlists(
                 $this->wishlistProvider->getWishlist()->getId()
             );
+            $firstWishlist = array_shift($wishlists);
             $items = $this->moduleHelper->getMultipleWishlistItems(null);
 
             if (!count($items) && $firstWishlist) {

@@ -7,9 +7,8 @@
  */
 namespace BKozlic\MultipleWishlist\CustomerData;
 
-use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
+use BKozlic\MultipleWishlist\Helper\Data;
 use Magento\Customer\CustomerData\SectionSourceInterface;
-use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\UrlInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 
@@ -24,37 +23,29 @@ class MultipleWishlist implements SectionSourceInterface
     protected $wishlistHelper;
 
     /**
-     * @var SearchCriteriaBuilder
-     */
-    protected $searchCriteriaBuilder;
-
-    /**
-     * @var MultipleWishlistRepositoryInterface
-     */
-    protected $multipleWishlistRepository;
-
-    /**
      * @var UrlInterface
      */
     protected $urlBuilder;
 
     /**
+     * @var Data
+     */
+    protected $moduleHelper;
+
+    /**
      * MultipleWishlist constructor.
      * @param WishlistHelper $wishlistHelper
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param UrlInterface $urlBuilder
+     * @param Data $moduleHelper
      */
     public function __construct(
         WishlistHelper $wishlistHelper,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        MultipleWishlistRepositoryInterface $multipleWishlistRepository,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        Data $moduleHelper
     ) {
         $this->wishlistHelper = $wishlistHelper;
-        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->multipleWishlistRepository = $multipleWishlistRepository;
         $this->urlBuilder = $urlBuilder;
+        $this->moduleHelper = $moduleHelper;
     }
 
     /**
@@ -62,6 +53,10 @@ class MultipleWishlist implements SectionSourceInterface
      */
     public function getSectionData()
     {
+        if (!$this->moduleHelper->isEnabled()) {
+            return [];
+        }
+
         return [
             'createUrl' => $this->urlBuilder->getUrl('multiplewishlist/manage/create', []),
             'items' => $this->getItems(),
@@ -74,11 +69,7 @@ class MultipleWishlist implements SectionSourceInterface
      */
     protected function getItems()
     {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter('wishlist_id', $this->wishlistHelper->getWishlist()->getId(), 'eq')
-            ->create();
-
-        $collection = $this->multipleWishlistRepository->getList($searchCriteria)->getItems();
+        $collection = $this->moduleHelper->getAllMultipleWishlists($this->wishlistHelper->getWishlist()->getId());
         $items = [];
 
         foreach ($collection as $multipleWishlist) {

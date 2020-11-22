@@ -114,7 +114,10 @@ class Wishlist
          */
         if (!$multipleWishlistId && !count($itemList)) {
             $wishlist = $this->wishlistProvider->getWishlist()->getId();
-            $firstWishlist = $this->moduleHelper->getFirstMultipleWishlist($wishlist);
+            $wishlists = $this->moduleHelper->getAllMultipleWishlists(
+                $wishlist
+            );
+            $firstWishlist = array_shift($wishlists);
 
             if ($firstWishlist) {
                 $itemList = $this->moduleHelper->getMultipleWishlistItems(

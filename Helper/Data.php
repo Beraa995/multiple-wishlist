@@ -159,23 +159,21 @@ class Data extends AbstractHelper
     }
 
     /**
-     * Returns first multiple wishlist for a given wishlist id
+     * Returns multiple wishlists for a given wishlist id
      *
      * @param int $wishlistId
-     * @return MultipleWishlistInterface
+     * @return MultipleWishlistInterface[]
      */
-    public function getFirstMultipleWishlist($wishlistId)
+    public function getAllMultipleWishlists($wishlistId)
     {
         $this->searchCriteriaBuilder->addFilter(
             MultipleWishlistInterface::WISHLIST_ID,
             $wishlistId
         );
 
-        $multipleWishlistList = $this->multipleWishlistRepository->getList(
+        return $this->multipleWishlistRepository->getList(
             $this->searchCriteriaBuilder->create()
         )->getItems();
-
-        return array_shift($multipleWishlistList);
     }
 
     /**
