@@ -15,39 +15,13 @@ use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotDeleteException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\UrlInterface;
 
 /**
  * Controller for multiple wishlist deletion
  */
 class Delete extends AbstractManage implements HttpPostActionInterface
 {
-    /**
-     * @var Validator
-     */
-    protected $formKeyValidator;
-
-    /**
-     * @var MultipleWishlistRepository
-     */
-    protected $multipleWishlistRepository;
-
-    /**
-     * Create constructor.
-     *
-     * @param Context $context
-     * @param Validator $formKeyValidator
-     * @param MultipleWishlistRepository $multipleWishlistRepository
-     */
-    public function __construct(
-        Context $context,
-        Validator $formKeyValidator,
-        MultipleWishlistRepository $multipleWishlistRepository
-    ) {
-        parent::__construct($context);
-        $this->formKeyValidator = $formKeyValidator;
-        $this->multipleWishlistRepository = $multipleWishlistRepository;
-    }
-
     /**
      * Process multiple wishlist removal
      */

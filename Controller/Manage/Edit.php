@@ -7,17 +7,17 @@
  */
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
 use BKozlic\MultipleWishlist\Helper\Data;
-use Magento\Wishlist\Controller\AbstractIndex;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Wishlist\Helper\Data as WishlistHelper;
+use Magento\Wishlist\Controller\AbstractIndex;
 
 /**
- * Multiple wishlist index controller
+ * Multiple wishlist edit controller
  */
-class Index extends AbstractIndex implements HttpGetActionInterface
+class Edit extends AbstractIndex implements HttpGetActionInterface
 {
     /**
      * @var Data
@@ -44,7 +44,15 @@ class Index extends AbstractIndex implements HttpGetActionInterface
         }
 
         $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-        $resultPage->getConfig()->getTitle()->set(__('Manage Wishlists'));
+        $multipleWishlist = $this->getRequest()->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+
+        if ($multipleWishlist) {
+            //@TODO Use wishlist name in the title
+            $resultPage->getConfig()->getTitle()->set(__('Edit Wishlist'));
+        } else {
+            $resultPage->getConfig()->getTitle()->set(__('Create New Wishlist'));
+        }
+
         return $resultPage;
     }
 }

@@ -21,6 +21,7 @@ use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Math\Random;
+use Magento\Framework\UrlInterface;
 use Magento\Wishlist\Helper\Data as WishlistHelper;
 use Psr\Log\LoggerInterface;
 
@@ -33,11 +34,6 @@ class Create extends AbstractManage implements HttpPostActionInterface
      * @var MultipleWishlistFactory
      */
     protected $multipleWishlistFactory;
-
-    /**
-     * @var MultipleWishlistRepository
-     */
-    protected $multipleWishlistRepository;
 
     /**
      * @var WishlistHelper
@@ -55,11 +51,6 @@ class Create extends AbstractManage implements HttpPostActionInterface
     protected $mathRandom;
 
     /**
-     * @var Validator
-     */
-    protected $formKeyValidator;
-
-    /**
      * @var SearchCriteriaBuilder
      */
     protected $searchCriteriaBuilder;
@@ -73,6 +64,7 @@ class Create extends AbstractManage implements HttpPostActionInterface
      * Create constructor.
      *
      * @param Context $context
+     * @param UrlInterface $urlBuilder
      * @param MultipleWishlistFactory $multipleWishlistFactory
      * @param MultipleWishlistRepository $multipleWishlistRepository
      * @param WishlistHelper $wishlistHelper
@@ -84,6 +76,7 @@ class Create extends AbstractManage implements HttpPostActionInterface
      */
     public function __construct(
         Context $context,
+        UrlInterface $urlBuilder,
         MultipleWishlistFactory $multipleWishlistFactory,
         MultipleWishlistRepository $multipleWishlistRepository,
         WishlistHelper $wishlistHelper,
@@ -93,13 +86,11 @@ class Create extends AbstractManage implements HttpPostActionInterface
         SearchCriteriaBuilder $searchCriteriaBuilder,
         Data $moduleHelper
     ) {
-        parent::__construct($context);
+        parent::__construct($context, $urlBuilder, $formKeyValidator, $multipleWishlistRepository);
         $this->multipleWishlistFactory = $multipleWishlistFactory;
-        $this->multipleWishlistRepository = $multipleWishlistRepository;
         $this->wishlistHelper = $wishlistHelper;
         $this->logger = $logger;
         $this->mathRandom = $mathRandom;
-        $this->formKeyValidator = $formKeyValidator;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->moduleHelper = $moduleHelper;
     }

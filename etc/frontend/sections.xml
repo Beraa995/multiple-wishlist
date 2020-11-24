@@ -15,4 +15,8 @@
     <action name="multiplewishlist/manage/delete">
         <section name="multiple-wishlist"/>
     </action>
+
+    <action name="multiplewishlist/manage/editpost">
+        <section name="multiple-wishlist"/>
+    </action>
 </config>

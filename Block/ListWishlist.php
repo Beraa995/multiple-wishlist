@@ -16,6 +16,8 @@ use Magento\Framework\DataObject;
 use Magento\Framework\View\Element\Template;
 use Magento\Wishlist\Helper\Data;
 
+//@TODO Wishlist sidebar items
+
 /**
  * Block class for multiple wishlist list rendering
  */
@@ -111,7 +113,7 @@ class ListWishlist extends Template
         $data = [
             'id' => $id,
             'confirmation' => true,
-            'confirmationMessage' => __('Are you sure you want to remove wishlist?')
+            'confirmationMessage' => __('Are you sure you want to remove wishlist? All items will be removed.')
         ];
         return $this->postHelper->getPostData($this->getUrl('multiplewishlist/manage/delete'), $data);
     }

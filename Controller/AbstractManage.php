@@ -7,16 +7,55 @@
  */
 namespace BKozlic\MultipleWishlist\Controller;
 
+use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
 use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Data\Form\FormKey\Validator;
+use Magento\Framework\UrlInterface;
 
 /**
  * Abstract class for multiple wishlist manage controllers
  */
 abstract class AbstractManage extends Action
 {
+    /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
+
+    /**
+     * @var Validator
+     */
+    protected $formKeyValidator;
+
+    /**
+     * @var MultipleWishlistRepository
+     */
+    protected $multipleWishlistRepository;
+
+    /**
+     * AbstractManage constructor.
+     *
+     * @param Context $context
+     * @param UrlInterface $urlBuilder
+     * @param Validator $formKeyValidator
+     * @param MultipleWishlistRepository $multipleWishlistRepository
+     */
+    public function __construct(
+        Context $context,
+        UrlInterface $urlBuilder,
+        Validator $formKeyValidator,
+        MultipleWishlistRepository $multipleWishlistRepository
+    ) {
+        parent::__construct($context);
+        $this->urlBuilder = $urlBuilder;
+        $this->formKeyValidator = $formKeyValidator;
+        $this->multipleWishlistRepository = $multipleWishlistRepository;
+    }
+
     /**
      * Process request
      *
@@ -44,10 +83,12 @@ abstract class AbstractManage extends Action
 
         if (!$success) {
             $this->messageManager->addErrorMessage($message);
+            $resultRedirect->setPath($this->_redirect->getRefererUrl());
         } else {
             $this->messageManager->addSuccessMessage($message);
+            $resultRedirect->setPath($this->urlBuilder->getUrl('*/*/index'));
         }
 
-        return $resultRedirect->setPath($this->_redirect->getRefererUrl());
+        return $resultRedirect;
     }
 }
