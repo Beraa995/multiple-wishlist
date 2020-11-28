@@ -6,7 +6,6 @@
 
 $viewModel = $block->getViewModel();
 $inputValues = $viewModel->getManageFormInputValues();
-//@TODO Check escapes in phtml files
 ?>
 <form action="<?= $block->escapeUrl($viewModel->getFormPostUrl()); ?>" method="post" data-mage-init='{"validation":{}}'>
     <?= $block->getBlockHtml('formkey') ?>

@@ -44,11 +44,13 @@ class Edit extends AbstractIndex implements HttpGetActionInterface
         }
 
         $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
-        $multipleWishlist = $this->getRequest()->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+        $multipleWishlistId = $this->getRequest()->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
 
-        if ($multipleWishlist) {
-            //@TODO Use wishlist name in the title
-            $resultPage->getConfig()->getTitle()->set(__('Edit Wishlist'));
+        if ($multipleWishlistId) {
+            $multipleWishlist = $this->moduleHelper->getMultipleWishlist($multipleWishlistId);
+            $resultPage->getConfig()->getTitle()->set(
+                __('Edit Wishlist: %1', $multipleWishlist ? $multipleWishlist->getName() : '')
+            );
         } else {
             $resultPage->getConfig()->getTitle()->set(__('Create New Wishlist'));
         }

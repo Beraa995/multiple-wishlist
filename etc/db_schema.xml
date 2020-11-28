@@ -39,6 +39,6 @@
                     referenceColumn="wishlist_item_id" onDelete="CASCADE" />
         <constraint xsi:type="foreign" referenceId="MULTIPLE_WISHLIST_ITEM_MULTIPLE_WISHLIST_ID_MULTIPLE_WISHLIST_MULTIPLE_WISHLIST_ID"
                     table="multiple_wishlist_item" column="multiple_wishlist_id" referenceTable="multiple_wishlist"
-                    referenceColumn="multiple_wishlist_id" onDelete="CASCADE" />
+                    referenceColumn="multiple_wishlist_id" onDelete="SET NULL" />
     </table>
 </schema>

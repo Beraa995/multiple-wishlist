@@ -10,13 +10,16 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
     <action name="multiplewishlist/manage/create">
         <section name="multiple-wishlist"/>
+        <section name="wishlist"/>
     </action>
 
     <action name="multiplewishlist/manage/delete">
         <section name="multiple-wishlist"/>
+        <section name="wishlist"/>
     </action>
 
     <action name="multiplewishlist/manage/editpost">
         <section name="multiple-wishlist"/>
+        <section name="wishlist"/>
     </action>
 </config>

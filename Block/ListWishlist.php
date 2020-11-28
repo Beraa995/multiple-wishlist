@@ -13,10 +13,12 @@ use BKozlic\MultipleWishlist\Model\ResourceModel\MultipleWishlist\Collection;
 use BKozlic\MultipleWishlist\Model\ResourceModel\MultipleWishlist\CollectionFactory;
 use Magento\Framework\Data\Helper\PostHelper;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Template;
 use Magento\Wishlist\Helper\Data;
 
 //@TODO Wishlist sidebar items
+//@TODO Check admin wishlist rendering
 
 /**
  * Block class for multiple wishlist list rendering
@@ -92,9 +94,10 @@ class ListWishlist extends Template
     }
 
     /**
-     * Returns number of product in the wishlist
+     * Returns number of products in the multiple wishlist
      *
      * @param $wishlistId
+     * @throws NoSuchEntityException
      * @return int
      */
     public function countItems($wishlistId)
@@ -113,7 +116,9 @@ class ListWishlist extends Template
         $data = [
             'id' => $id,
             'confirmation' => true,
-            'confirmationMessage' => __('Are you sure you want to remove wishlist? All items will be removed.')
+            'confirmationMessage' => __(
+                'Are you sure you want to remove wishlist? All items will be moved to the default wishlist.'
+            )
         ];
         return $this->postHelper->getPostData($this->getUrl('multiplewishlist/manage/delete'), $data);
     }

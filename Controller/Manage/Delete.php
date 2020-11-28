@@ -8,6 +8,7 @@
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
 use BKozlic\MultipleWishlist\Controller\AbstractManage;
+use BKozlic\MultipleWishlist\Helper\Data;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -23,11 +24,42 @@ use Magento\Framework\UrlInterface;
 class Delete extends AbstractManage implements HttpPostActionInterface
 {
     /**
+     * @var Data
+     */
+    protected $moduleHelper;
+
+    /**
+     * Delete constructor.
+     * @param Context $context
+     * @param UrlInterface $urlBuilder
+     * @param Validator $formKeyValidator
+     * @param MultipleWishlistRepository $multipleWishlistRepository
+     * @param Data $moduleHelper
+     */
+    public function __construct(
+        Context $context,
+        UrlInterface $urlBuilder,
+        Validator $formKeyValidator,
+        MultipleWishlistRepository $multipleWishlistRepository,
+        Data $moduleHelper
+    ) {
+        parent::__construct(
+            $context,
+            $urlBuilder,
+            $formKeyValidator,
+            $multipleWishlistRepository
+        );
+        $this->moduleHelper = $moduleHelper;
+    }
+
+    /**
      * Process multiple wishlist removal
+     *
+     * @throws NoSuchEntityException
      */
     public function execute()
     {
-        //@TODO Move items to another wishlist
+        //@TODO Prevent saving wishlist with the same name
         $params = $this->getRequest()->getParams();
 
         if (!$this->formKeyValidator->validate($this->getRequest())) {
@@ -48,7 +80,7 @@ class Delete extends AbstractManage implements HttpPostActionInterface
             $this->multipleWishlistRepository->deleteById($params['id']);
         } catch (CouldNotDeleteException $e) {
             return $this->processReturn(
-                __('Something went wrong while removing the wishlist.'),
+                __('Something went wrong.'),
                 false
             );
         } catch (NoSuchEntityException $e) {
@@ -62,6 +94,8 @@ class Delete extends AbstractManage implements HttpPostActionInterface
                 false
             );
         }
+
+        $this->moduleHelper->recalculateDefaultWishlistItems();
 
         return $this->processReturn(
             __('Wishlist has been successfully removed.'),

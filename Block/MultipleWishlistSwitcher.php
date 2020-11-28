@@ -15,7 +15,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Wishlist\Helper\Data;
-//@TODO Change item count in the my account dropdown
+
 /**
  * Block class for multiple wishlist switcher rendering
  */
