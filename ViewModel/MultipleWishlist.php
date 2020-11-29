@@ -89,7 +89,7 @@ class MultipleWishlist implements ArgumentInterface
      *
      * @return string
      */
-    public function getFormPostUrl()
+    public function getEditPostUrl()
     {
         $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
 
@@ -98,6 +98,23 @@ class MultipleWishlist implements ArgumentInterface
         }
 
         return $this->urlBuilder->getUrl('multiplewishlist/manage/create');
+    }
+
+    /**
+     * Returns form url for wishlist items move functionality
+     *
+     * @return string
+     */
+    public function getMovePostUrl()
+    {
+        $multipleWishlist = $this->request->getParam(MultipleWishlistInterface::MULTIPLE_WISHLIST_PARAM_NAME);
+        $params = [];
+
+        if ($multipleWishlist) {
+            $params['prev'] = $multipleWishlist;
+        }
+
+        return $this->urlBuilder->getUrl('multiplewishlist/manage/move', $params);
     }
 
     /**

@@ -7,9 +7,9 @@
  */
 namespace BKozlic\MultipleWishlist\Model;
 
-use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemSearchResultsInterfaceFactory;
-use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemSearchResultsInterface;
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemInterface;
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemSearchResultsInterface;
+use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistItemSearchResultsInterfaceFactory;
 use BKozlic\MultipleWishlist\Api\MultipleWishlistItemRepositoryInterface;
 use BKozlic\MultipleWishlist\Model\ResourceModel\MultipleWishlistItem as MultipleWishlistItemResource;
 use BKozlic\MultipleWishlist\Model\ResourceModel\MultipleWishlistItem\CollectionFactory as MultipleWishlistItemCollection;
@@ -74,7 +74,7 @@ class MultipleWishlistItemRepository implements MultipleWishlistItemRepositoryIn
         JoinProcessorInterface $extensionAttributesJoinProcessor
     ) {
         $this->resource = $resource;
-        $this->multipleWishlistFactory = $multipleWishlistItemFactory;
+        $this->multipleWishlistItemFactory = $multipleWishlistItemFactory;
         $this->collectionFactory = $collectionFactory;
         $this->searchResultsFactory = $searchResultsFactory;
         $this->collectionProcessor = $collectionProcessor;
@@ -116,6 +116,28 @@ class MultipleWishlistItemRepository implements MultipleWishlistItemRepositoryIn
             throw new NoSuchEntityException(__(
                 'The multiple wishlist item record with the "%1" ID doesn\'t exist.',
                 $multipleWishlistItemId
+            ));
+        }
+
+        return $multipleWishlistItem;
+    }
+
+    /**
+     * Load multiple wishlist item by main wishlist item id
+     *
+     * @param int $wishlistItemId
+     * @throws NoSuchEntityException
+     * @throws LocalizedException
+     * @return MultipleWishlistItem
+     */
+    public function getByWishlistItemId(int $wishlistItemId)
+    {
+        $multipleWishlistItem = $this->multipleWishlistItemFactory->create();
+        $this->resource->load($multipleWishlistItem, $wishlistItemId, 'wishlist_item_id');
+
+        if (!$multipleWishlistItem->getId()) {
+            throw new NoSuchEntityException(__(
+                'The multiple wishlist item record with doesn\'t exist.'
             ));
         }
 

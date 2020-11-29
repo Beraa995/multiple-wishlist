@@ -8,10 +8,10 @@
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
 use BKozlic\MultipleWishlist\Api\Data\MultipleWishlistInterface;
+use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
 use BKozlic\MultipleWishlist\Controller\AbstractManage;
 use BKozlic\MultipleWishlist\Helper\Data;
 use BKozlic\MultipleWishlist\Model\MultipleWishlistFactory;
-use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -66,7 +66,7 @@ class Create extends AbstractManage implements HttpPostActionInterface
      * @param Context $context
      * @param UrlInterface $urlBuilder
      * @param MultipleWishlistFactory $multipleWishlistFactory
-     * @param MultipleWishlistRepository $multipleWishlistRepository
+     * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param WishlistHelper $wishlistHelper
      * @param LoggerInterface $logger
      * @param Random $mathRandom
@@ -78,7 +78,7 @@ class Create extends AbstractManage implements HttpPostActionInterface
         Context $context,
         UrlInterface $urlBuilder,
         MultipleWishlistFactory $multipleWishlistFactory,
-        MultipleWishlistRepository $multipleWishlistRepository,
+        MultipleWishlistRepositoryInterface $multipleWishlistRepository,
         WishlistHelper $wishlistHelper,
         LoggerInterface $logger,
         Random $mathRandom,
@@ -103,7 +103,6 @@ class Create extends AbstractManage implements HttpPostActionInterface
      */
     public function execute()
     {
-        //@TODO Move item to another wishlist functionality
         $params = $this->getRequest()->getParams();
         $wishlistId = $this->wishlistHelper->getWishlist()->getId();
 

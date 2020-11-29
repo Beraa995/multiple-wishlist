@@ -7,7 +7,7 @@
  */
 namespace BKozlic\MultipleWishlist\Controller;
 
-use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
+use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\Json;
@@ -32,7 +32,7 @@ abstract class AbstractManage extends Action
     protected $formKeyValidator;
 
     /**
-     * @var MultipleWishlistRepository
+     * @var MultipleWishlistRepositoryInterface
      */
     protected $multipleWishlistRepository;
 
@@ -42,13 +42,13 @@ abstract class AbstractManage extends Action
      * @param Context $context
      * @param UrlInterface $urlBuilder
      * @param Validator $formKeyValidator
-     * @param MultipleWishlistRepository $multipleWishlistRepository
+     * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      */
     public function __construct(
         Context $context,
         UrlInterface $urlBuilder,
         Validator $formKeyValidator,
-        MultipleWishlistRepository $multipleWishlistRepository
+        MultipleWishlistRepositoryInterface $multipleWishlistRepository
     ) {
         parent::__construct($context);
         $this->urlBuilder = $urlBuilder;
@@ -61,9 +61,10 @@ abstract class AbstractManage extends Action
      *
      * @param $message
      * @param bool $success
+     * @param null|string $referer
      * @return Json|Redirect
      */
-    protected function processReturn($message, $success = true)
+    protected function processReturn($message, $success = true, $referer = null)
     {
         /**
          * @var Json $resultJson
@@ -85,8 +86,13 @@ abstract class AbstractManage extends Action
             $this->messageManager->addErrorMessage($message);
             $resultRedirect->setPath($this->_redirect->getRefererUrl());
         } else {
+            if ($referer) {
+                $resultRedirect->setPath($referer);
+            } else {
+                $resultRedirect->setPath($this->urlBuilder->getUrl('*/*/index'));
+            }
+
             $this->messageManager->addSuccessMessage($message);
-            $resultRedirect->setPath($this->urlBuilder->getUrl('*/*/index'));
         }
 
         return $resultRedirect;

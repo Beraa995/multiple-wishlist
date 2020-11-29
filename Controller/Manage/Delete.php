@@ -7,9 +7,9 @@
  */
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
+use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
 use BKozlic\MultipleWishlist\Controller\AbstractManage;
 use BKozlic\MultipleWishlist\Helper\Data;
-use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Data\Form\FormKey\Validator;
@@ -33,14 +33,14 @@ class Delete extends AbstractManage implements HttpPostActionInterface
      * @param Context $context
      * @param UrlInterface $urlBuilder
      * @param Validator $formKeyValidator
-     * @param MultipleWishlistRepository $multipleWishlistRepository
+     * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param Data $moduleHelper
      */
     public function __construct(
         Context $context,
         UrlInterface $urlBuilder,
         Validator $formKeyValidator,
-        MultipleWishlistRepository $multipleWishlistRepository,
+        MultipleWishlistRepositoryInterface $multipleWishlistRepository,
         Data $moduleHelper
     ) {
         parent::__construct(
@@ -59,7 +59,6 @@ class Delete extends AbstractManage implements HttpPostActionInterface
      */
     public function execute()
     {
-        //@TODO Prevent saving wishlist with the same name
         $params = $this->getRequest()->getParams();
 
         if (!$this->formKeyValidator->validate($this->getRequest())) {
@@ -95,7 +94,7 @@ class Delete extends AbstractManage implements HttpPostActionInterface
             );
         }
 
-        $this->moduleHelper->recalculateDefaultWishlistItems();
+        $this->moduleHelper->recalculateWishlistItems(null);
 
         return $this->processReturn(
             __('Wishlist has been successfully removed.'),

@@ -9,14 +9,45 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceBlock name="bkozlic.multiplewishlist.modal" remove="true" />
+
+        <referenceContainer name="before.body.end">
+            <block ifconfig="wishlist/multiple_wishlist_general/enabled" name="bkozlic.multiplewishlist.move.modal"
+                   template="BKozlic_MultipleWishlist::move/modal.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">BKozlic\MultipleWishlist\ViewModel\MultipleWishlist</argument>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="multiple_wishlists" xsi:type="array">
+                                <item name="component" xsi:type="string">BKozlic_MultipleWishlist/js/view/multiple-wishlists</item>
+                                <item name="config" xsi:type="array">
+                                    <item name="template" xsi:type="string">BKozlic_MultipleWishlist/list</item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
         <referenceContainer name="content">
             <block class="BKozlic\MultipleWishlist\Block\MultipleWishlistSwitcher" name="multiple.wishlist.switcher"
                    template="BKozlic_MultipleWishlist::switcher.phtml" before="customer.wishlist" />
         </referenceContainer>
 
+        <referenceContainer name="customer.wishlist.buttons">
+            <block ifconfig="wishlist/multiple_wishlist_general/enabled" class="Magento\Wishlist\Block\Customer\Wishlist\Button"
+                   name="customer.wishlist.button.moveall" template="BKozlic_MultipleWishlist::button/move.phtml" after="-" />
+        </referenceContainer>
+
         <referenceBlock name="customer.wishlist.items">
             <block ifconfig="wishlist/multiple_wishlist_general/enabled" class="BKozlic\MultipleWishlist\Block\Items\MultipleWishlistFormInput"
                    name="multiple.wishlist.form.input" />
+        </referenceBlock>
+
+        <referenceBlock name="customer.wishlist.item.actions">
+            <block ifconfig="wishlist/multiple_wishlist_general/enabled" class="Magento\Wishlist\Block\Customer\Wishlist\Item\Column"
+                   name="multiple.wishlist.item.move" template="BKozlic_MultipleWishlist::item/column/move.phtml" after="-" />
         </referenceBlock>
     </body>
 </page>

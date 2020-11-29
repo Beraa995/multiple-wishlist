@@ -1,5 +1,12 @@
 <?php
 /**
+ * @category  BKozlic
+ * @package   BKozlic\MultipleWishlist
+ * @author    Berin Kozlic - berin.kozlic@gmail.com
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
  * @var \Magento\Framework\View\Element\Template $block
  * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
  */
@@ -7,8 +14,8 @@
 $viewModel = $block->getViewModel();
 $inputValues = $viewModel->getManageFormInputValues();
 ?>
-<form action="<?= $block->escapeUrl($viewModel->getFormPostUrl()); ?>" method="post" data-mage-init='{"validation":{}}'>
-    <?= $block->getBlockHtml('formkey') ?>
+<form action="<?= $block->escapeUrl($viewModel->getEditPostUrl()); ?>" method="post" data-mage-init='{"validation":{}}'>
+    <?= $block->getBlockHtml('formkey'); ?>
     <input type="hidden" name="id" value="<?= $block->escapeHtml($inputValues['id'] ?? ''); ?>">
     <fieldset class="fieldset">
         <legend class="legend"><span><?= $block->escapeHtml(__('Wishlist Information')); ?></span></legend>

@@ -10,13 +10,15 @@
  * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
  */
 $viewModel = $block->getViewModel();
+//@TODO Check share wishlist when no default is there
 ?>
 <?php if ($viewModel->isCustomerLoggedIn() && $viewModel->canShowModal()): ?>
     <div class="multiplewishlist-modal" data-mage-init='{"multipleWishlistModal": {}}'
          data-bind="scope: 'multiple_wishlists'" data-item="multiple_wishlists">
         <form id="multiple-wishlist-form" action="#" method="post">
+            <p><?= __('If no wishlist is selected, item will be added to the Default Wishlist.'); ?></p>
             <!-- ko ifnot: hasWishlists() -->
-                <?= __('You don\'t have created wishlists. Item will be assigned to the Default wishlist.'); ?>
+                <p><?= __('You don\'t have created wishlists.'); ?></p>
             <!-- /ko -->
 
             <!-- ko template: getTemplate() --><!-- /ko -->

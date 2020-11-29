@@ -20,6 +20,16 @@
                                 <item name="config" xsi:type="array">
                                     <item name="template" xsi:type="string">BKozlic_MultipleWishlist/list</item>
                                 </item>
+
+                                <item name="children" xsi:type="array">
+                                    <item name="create_wishlist" xsi:type="array">
+                                        <item name="component" xsi:type="string">BKozlic_MultipleWishlist/js/view/create-multiple-wishlist</item>
+                                        <item name="displayArea" xsi:type="string">create_wishlist</item>
+                                        <item name="config" xsi:type="array">
+                                            <item name="template" xsi:type="string">BKozlic_MultipleWishlist/create</item>
+                                        </item>
+                                    </item>
+                                </item>
                             </item>
                         </item>
                     </argument>

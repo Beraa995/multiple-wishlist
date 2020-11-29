@@ -7,7 +7,8 @@
 var config = {
     map: {
         '*': {
-            multipleWishlistModal: 'BKozlic_MultipleWishlist/js/multiplewishlist-modal'
+            multipleWishlistModal: 'BKozlic_MultipleWishlist/js/multiplewishlist-modal',
+            multipleWishlistMoveModal: 'BKozlic_MultipleWishlist/js/multiplewishlist-move-modal'
         }
     }
 };

@@ -277,12 +277,13 @@ class Data extends AbstractHelper
     /**
      * Merges duplicate products in the default wishlist
      *
+     * @param int $wishlistId
      * @throws NoSuchEntityException
      * @return void
      */
-    public function recalculateDefaultWishlistItems()
+    public function recalculateWishlistItems($wishlistId)
     {
-        $defaultWishlistItems = $this->getMultipleWishlistItems(null);
+        $defaultWishlistItems = $this->getMultipleWishlistItems($wishlistId);
         $itemCollection = $this->getItemCollectionByItemIds($defaultWishlistItems);
         $options = [];
         $itemQtyMapper = [];

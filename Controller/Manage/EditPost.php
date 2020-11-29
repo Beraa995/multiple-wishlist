@@ -7,9 +7,9 @@
  */
 namespace BKozlic\MultipleWishlist\Controller\Manage;
 
+use BKozlic\MultipleWishlist\Api\MultipleWishlistRepositoryInterface;
 use BKozlic\MultipleWishlist\Controller\AbstractManage;
 use BKozlic\MultipleWishlist\Helper\Data;
-use BKozlic\MultipleWishlist\Model\MultipleWishlistRepository;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
@@ -45,7 +45,7 @@ class EditPost extends AbstractManage implements HttpPostActionInterface
      *
      * @param Context $context
      * @param UrlInterface $urlBuilder
-     * @param MultipleWishlistRepository $multipleWishlistRepository
+     * @param MultipleWishlistRepositoryInterface $multipleWishlistRepository
      * @param LoggerInterface $logger
      * @param Validator $formKeyValidator
      * @param WishlistHelper $wishlistHelper
@@ -54,7 +54,7 @@ class EditPost extends AbstractManage implements HttpPostActionInterface
     public function __construct(
         Context $context,
         UrlInterface $urlBuilder,
-        MultipleWishlistRepository $multipleWishlistRepository,
+        MultipleWishlistRepositoryInterface $multipleWishlistRepository,
         LoggerInterface $logger,
         Validator $formKeyValidator,
         WishlistHelper $wishlistHelper,
