@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category  BKozlic
+ * @package   BKozlic\MultipleWishlist
+ * @author    Berin Kozlic - berin.kozlic@gmail.com
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Customer\CustomerData\SectionPoolInterface">
+        <arguments>
+            <argument name="sectionSourceMap" xsi:type="array">
+                <item name="multiple-wishlist" xsi:type="string">BKozlic\MultipleWishlist\CustomerData\MultipleWishlist</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Index">
+        <plugin name="change_wishlist_page_title_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Index" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Update">
+        <plugin name="update_multiple_wishlist_items_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Update" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Cart">
+        <plugin name="add_param_to_redirect_url_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\Cart" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Shared\WishlistProvider">
+        <plugin name="load_shared_multiple_wishlist_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Shared\WishlistProvider" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Send">
+        <plugin name="wishlist_share_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\AddSendUpdateOptions" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\Add">
+        <plugin name="wishlist_add_item_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\AddSendUpdateOptions" />
+    </type>
+
+    <type name="Magento\Wishlist\Controller\Index\UpdateItemOptions">
+        <plugin name="wishlist_configure_redirect_plugin" type="BKozlic\MultipleWishlist\Plugin\Controller\Wishlist\AddSendUpdateOptions" />
+    </type>
+
+    <type name="Magento\Wishlist\Block\Customer\Wishlist">
+        <plugin name="change_add_all_to_cart_plugin" type="BKozlic\MultipleWishlist\Plugin\Block\Wishlist" />
+    </type>
+
+    <type name="Magento\Wishlist\Block\Customer\Sharing">
+        <plugin name="add_multiple_wishlist_to_send_url_plugin" type="BKozlic\MultipleWishlist\Plugin\Block\Sharing" />
+    </type>
+
+    <type name="Magento\Wishlist\Model\Item">
+        <plugin name="multiple_wishlist_item_add_to_cart_plugin" type="BKozlic\MultipleWishlist\Plugin\Model\Wishlist\Item" />
+    </type>
+
+    <type name="Magento\Wishlist\Model\Wishlist">
+        <plugin name="filter_wishlist_collection_plugin" type="BKozlic\MultipleWishlist\Plugin\Model\Wishlist" />
+    </type>
+
+    <type name="Magento\Wishlist\Model\ResourceModel\Wishlist">
+        <plugin name="after_wishlist_save_plugin" type="BKozlic\MultipleWishlist\Plugin\Model\ResourceModel\Wishlist" />
+    </type>
+
+    <type name="Magento\Wishlist\Helper\Data">
+        <plugin name="url_params_change_plugin" type="BKozlic\MultipleWishlist\Plugin\Helper\Wishlist\Data" />
+    </type>
+
+    <type name="Magento\Wishlist\CustomerData\Wishlist">
+        <plugin name="change_wishlist_customer_data" type="BKozlic\MultipleWishlist\Plugin\CustomerData\Wishlist" />
+    </type>
+</config>

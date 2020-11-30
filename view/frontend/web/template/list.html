@@ -1,0 +1,24 @@
+<fieldset class="fieldset fieldset-multiple-wishlist">
+    <div class="field field-multiple-wishlist">
+        <!-- ko if: hasWishlists() -->
+            <div class="label">
+                <!-- ko i18n: 'Wishlist' --><!-- /ko -->
+            </div>
+            <!-- ko foreach: { data: getMultipleWishlists(), as: 'item' } -->
+                <div class="multiple-wishlist-item">
+                    <input type="radio"
+                           name="multiple_wishlist"
+                           class="radio"
+                           data-bind="attr: {'id': 'multiple_wishlist' + item.id}, value: item.id" />
+                    <label data-bind="attr: {'for': 'multiple_wishlist' + item.id}" class="label">
+                        <span data-bind="text: item.name"></span>
+                    </label>
+                </div>
+            <!-- /ko -->
+        <!-- /ko -->
+    </div>
+
+    <!-- ko foreach: getRegion('create_wishlist') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+    <!-- /ko -->
+</fieldset>

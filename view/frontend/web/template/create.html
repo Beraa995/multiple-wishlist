@@ -1,0 +1,15 @@
+<div class="field field-multiple-wishlist">
+    <div class="label">
+        <!-- ko i18n: 'New Wishlist Name' --><!-- /ko -->
+    </div>
+    <input type="text" name="muttiple_wishlist_name" data-bind="value: wishlistNameValue, css: { 'mage-error': createError }">
+    <!-- ko if: createError -->
+    <div generated="true" class="mage-error">
+        <span data-bind="text: errorText"></span>
+    </div>
+    <!-- /ko -->
+</div>
+<button type="button" class="action primary"
+        data-bind="attr: {'title': createButtonText}, click: createNew, css: { disabled: ajaxProcess }">
+    <span data-bind="text: createButtonText"></span>
+</button>

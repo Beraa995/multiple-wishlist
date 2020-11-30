@@ -1,0 +1,66 @@
+<?php
+/**
+ * @category  BKozlic
+ * @package   BKozlic\MultipleWishlist
+ * @author    Berin Kozlic - berin.kozlic@gmail.com
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @var \BKozlic\MultipleWishlist\Block\ListWishlist $block
+ */
+
+$collection = $block->getCollection();
+?>
+<div class="block multiple-wishlist-actions">
+    <a class="action primary"
+       href="<?= $block->escapeUrl($block->getUrl('multiplewishlist/manage/new')); ?>">
+        <span><?= $block->escapeHtml(__('Create New Wishlist')); ?></span>
+    </a>
+</div>
+
+<?php if (!$collection->count()): ?>
+    <div class="message info empty"><span><?= $block->escapeHtml(__('You have no created wishlists.')) ?></span></div>
+<?php else: ?>
+    <?php if ($count = $block->countItems(null)): ?>
+        <p>
+            <span><?= $block->escapeHtml(__('Number of products in the default wishlist:')); ?></span>
+            <strong><?= $count; ?></strong>
+        </p>
+    <?php endif; ?>
+
+    <div class="toolbar">
+        <?= $block->getChildHtml('multiple.wishlist.pager'); ?>
+    </div>
+
+    <table class="table data multiple-wishlist-table">
+        <caption class="table-caption"><?= $block->escapeHtml(__('Multiple Wishlists')); ?></caption>
+        <thead>
+        <tr>
+            <th class="col"><?= $block->escapeHtml(__('Name')); ?></th>
+            <th class="col"><?= $block->escapeHtml(__('Number of Products')); ?></th>
+            <th class="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <?php foreach ($collection as $multipleWishlist): ?>
+            <tr>
+                <td class="col"><?= $block->escapeHtml($multipleWishlist->getName()); ?></td>
+                <td class="col"><?= $block->countItems($multipleWishlist->getId()); ?></td>
+                <td class="col actions">
+                    <a class="action view" href="<?= $block->escapeUrl($block->getUrl('wishlist', ['multiple_wishlist' => $multipleWishlist->getId()])) ?>">
+                        <span><?= $block->escapeHtml(__('View')) ?></span>
+                    </a>
+                    <a class="action edit" href="<?= $block->escapeUrl($block->getUrl('multiplewishlist/manage/edit', ['multiple_wishlist' => $multipleWishlist->getId()])) ?>">
+                        <span><?= $block->escapeHtml(__('Edit')) ?></span>
+                    </a>
+                    <a class="action delete" data-post="<?= $block->escapeUrl($block->getRemoveUrl($multipleWishlist->getId())); ?>" href="#">
+                        <span><?= $block->escapeHtml(__('Delete')) ?></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>

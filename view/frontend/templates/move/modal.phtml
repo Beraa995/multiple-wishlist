@@ -1,0 +1,34 @@
+<?php
+/**
+ * @category  BKozlic
+ * @package   BKozlic\MultipleWishlist
+ * @author    Berin Kozlic - berin.kozlic@gmail.com
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
+ */
+
+$viewModel = $block->getViewModel();
+?>
+<div class="multiplewishlist-move-modal" data-mage-init='{"multipleWishlistMoveModal": {}}'
+     data-bind="scope: 'multiple_wishlists'">
+    <form id="multiple-wishlist-move-form" action="<?= $block->escapeUrl($viewModel->getMovePostUrl()); ?>" method="post">
+        <?= $block->getBlockHtml('formkey') ?>
+        <p><?= __('If no wishlist is selected, item(s) will be moved to the Default Wishlist.'); ?></p>
+        <!-- ko ifnot: hasWishlists() -->
+            <p><?= __('You don\'t have created wishlists.'); ?></p>
+        <!-- /ko -->
+
+        <!-- ko template: getTemplate() --><!-- /ko -->
+    </form>
+</div>
+
+<script type="text/x-magento-init">
+    {
+        ".multiplewishlist-move-modal": {
+            "Magento_Ui/js/core/app": <?= /* @escapeNotVerified */ $block->getJsLayout(); ?>
+        }
+    }
+</script>
