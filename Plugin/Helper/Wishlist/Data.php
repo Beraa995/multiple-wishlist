@@ -69,7 +69,6 @@ class Data
      */
     public function afterGetAddToCartParams(WishlistHelper $subject, $result, $item, $addReferer = false)
     {
-        //@TODO Check another wishlist controllers
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

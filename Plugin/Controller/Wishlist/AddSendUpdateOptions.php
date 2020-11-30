@@ -90,7 +90,6 @@ class AddSendUpdateOptions
      */
     public function afterExecute($subject, $result)
     {
-        //@TODO Check Rss
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

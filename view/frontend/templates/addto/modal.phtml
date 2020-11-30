@@ -10,7 +10,6 @@
  * @var \BKozlic\MultipleWishlist\ViewModel\MultipleWishlist $viewModel
  */
 $viewModel = $block->getViewModel();
-//@TODO Check share wishlist when no default is there
 ?>
 <?php if ($viewModel->isCustomerLoggedIn() && $viewModel->canShowModal()): ?>
     <div class="multiplewishlist-modal" data-mage-init='{"multipleWishlistModal": {}}'

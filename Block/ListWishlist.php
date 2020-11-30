@@ -17,7 +17,6 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Template;
 use Magento\Wishlist\Helper\Data;
 
-//@TODO Wishlist sidebar items
 //@TODO Check admin wishlist rendering
 
 /**

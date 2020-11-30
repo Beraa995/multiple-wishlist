@@ -88,7 +88,6 @@ class WishlistProvider
      */
     public function afterGetWishlist(SharedProvider $subject, $result)
     {
-        //@TODO Show wishlist name
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }

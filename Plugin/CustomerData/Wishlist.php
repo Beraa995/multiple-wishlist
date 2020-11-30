@@ -8,9 +8,13 @@
 namespace BKozlic\MultipleWishlist\Plugin\CustomerData;
 
 use BKozlic\MultipleWishlist\Helper\Data as ModuleHelper;
+use Magento\Catalog\Helper\ImageFactory;
+use Magento\Catalog\Model\Product\Configuration\Item\ItemResolverInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Wishlist\Block\Customer\Sidebar;
 use Magento\Wishlist\CustomerData\Wishlist as WishlistCustomerData;
 use Magento\Wishlist\Helper\Data;
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory;
@@ -18,7 +22,7 @@ use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory;
 /**
  * Plugin class for changing original wishlist customer data
  */
-class Wishlist
+class Wishlist extends WishlistCustomerData
 {
     /**
      * @var ModuleHelper
@@ -41,23 +45,37 @@ class Wishlist
     protected $wishlistCollectionFactory;
 
     /**
+     * @var ItemResolverInterface
+     */
+    protected $itemResolver;
+
+    /**
      * Wishlist Customer Data Plugin constructor.
      *
-     * @param ModuleHelper $moduleHelper
      * @param Data $wishlistHelper
+     * @param Sidebar $block
+     * @param ImageFactory $imageHelperFactory
+     * @param ViewInterface $view
+     * @param ModuleHelper $moduleHelper
      * @param ScopeConfigInterface $scopeConfig
      * @param CollectionFactory $wishlistCollectionFactory
+     * @param ItemResolverInterface $itemResolver
      */
     public function __construct(
-        ModuleHelper $moduleHelper,
         Data $wishlistHelper,
+        Sidebar $block,
+        ImageFactory $imageHelperFactory,
+        ViewInterface $view,
+        ModuleHelper $moduleHelper,
         ScopeConfigInterface $scopeConfig,
-        CollectionFactory $wishlistCollectionFactory
-    ) {
+        CollectionFactory $wishlistCollectionFactory,
+        ItemResolverInterface $itemResolver
+    ){
+        parent::__construct($wishlistHelper, $block, $imageHelperFactory, $view);
         $this->moduleHelper = $moduleHelper;
-        $this->wishlistHelper = $wishlistHelper;
         $this->scopeConfig = $scopeConfig;
         $this->wishlistCollectionFactory = $wishlistCollectionFactory;
+        $this->itemResolver = $itemResolver;
     }
 
     /**
@@ -70,7 +88,6 @@ class Wishlist
      */
     public function afterGetSectionData(WishlistCustomerData $subject, array $result)
     {
-        //@TODO Check the error when module is disabled after being used
         if (!$this->moduleHelper->isEnabled()) {
             return $result;
         }
@@ -86,8 +103,28 @@ class Wishlist
             $itemCount = $collection->count();
         }
 
-        $result['counter'] = $itemCount;
+        $result['counter'] = $this->createCounter($itemCount);
+        $result['items'] = $this->getSidebarItems($collection);
 
         return $result;
+    }
+
+    /**
+     * Return items data for the sidebar
+     *
+     * @param $wishlistItemCollection
+     * @return array
+     */
+    protected function getSidebarItems($wishlistItemCollection)
+    {
+        $wishlistItemCollection->clear()->setPageSize(self::SIDEBAR_ITEMS_NUMBER)
+            ->setInStockFilter(true)->setOrder('added_at');
+
+        $items = [];
+        foreach ($wishlistItemCollection as $wishlistItem) {
+            $items[] = $this->getItemData($wishlistItem);
+        }
+
+        return $items;
     }
 }
